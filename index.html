@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <script src="./dist/app.js"></script>
+  <title>Black Jack</title>
+</head>
+<body>
+  <div id="main">
+    <div id="initialFromContents" class="vh-100 main-bg d-flex flex-column justify-content-center align-items-center">
+      <div class="container d-flex flex-wrap justify-content-center">
+        <div id="initialForm" class="initialForm">
+          <p class="w-100 text-center text-white font-weight-bold">Black Jack</p>
+          <div class="form-group mr-2">
+            <input class="form-control" type="text" placeholder="名前">
+          </div>
+          <div class="form-group">
+            <button id="formBtn" class="form-control btn btn-primary">スタート</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <div id="gameTable" class="gameTable-bg vh-100 d-flex flex-column justify-content-center align-items-center">
+      <div class="container d-flex flex-wrap justify-content-center">
+        <div id="betDecision" class="betDecision">
+          <div class="gameTable">
+            <div class="house d-flex justify-content-center">
+              <div class="playerContents d-flex flex-wrap justify-content-center align-items-center text-center">
+                <p class="playerName w-100">Dealer</p>
+                <p class="playerStatus w-100"></p>
+                <div class="playerCards w-100 d-flex justify-content-center">
+                  <div class="playerCard">
+                    <div class="suit w-100"><img src="./assets/suit/spade.png" alt=""></div>
+                    <div class="rank w-100">7</div>
+                  </div>
+                  <div class="playerCard d-flex flex-wrap justify-content-center align-items-center">
+                    <div class="suit w-100"><img src="./assets/suit/diamond.png" alt=""></div>
+                    <div class="rank  w-100">8</div>
+                  </div>
+                  <div class="playerCard">
+                    <div class="suit w-100"><img src="./assets/suit/heart.png" alt=""></div>
+                    <div class="rank w-100">10</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="players d-flex justify-content-center mb-5">
+              <div class="playerContents d-flex flex-wrap justify-content-center align-items-center text-center">
+                <p class="playerName w-100">Dealer</p>
+                <p class="playerStatus w-100"></p>
+                <div class="playerCards w-100 d-flex justify-content-center">
+                  <div class="playerCard">
+                    <div class="suit w-100"><img src="./assets/suit/spade.png" alt=""></div>
+                    <div class="rank w-100">7</div>
+                  </div>
+                  <div class="playerCard d-flex flex-wrap justify-content-center align-items-center">
+                    <div class="suit w-100"><img src="./assets/suit/diamond.png" alt=""></div>
+                    <div class="rank  w-100">8</div>
+                  </div>
+                  <div class="playerCard">
+                    <div class="suit w-100"><img src="./assets/suit/heart.png" alt=""></div>
+                    <div class="rank w-100">10</div>
+                  </div>
+                </div>
+              </div>
+              <div class="playerContents d-flex flex-wrap justify-content-center align-items-center text-center">
+                <p class="playerName w-100">Dealer</p>
+                <p class="playerStatus w-100"></p>
+                <div class="playerCards w-100 d-flex justify-content-center">
+                  <div class="playerCard">
+                    <div class="suit w-100"><img src="./assets/suit/spade.png" alt=""></div>
+                    <div class="rank w-100">7</div>
+                  </div>
+                  <div class="playerCard d-flex flex-wrap justify-content-center align-items-center">
+                    <div class="suit w-100"><img src="./assets/suit/diamond.png" alt=""></div>
+                    <div class="rank  w-100">8</div>
+                  </div>
+                  <div class="playerCard">
+                    <div class="suit w-100"><img src="./assets/suit/heart.png" alt=""></div>
+                    <div class="rank w-100">10</div>
+                  </div>
+                </div>
+              </div>
+              <div class="playerContents d-flex flex-wrap justify-content-center align-items-center text-center">
+                <p class="playerName w-100">Dealer</p>
+                <p class="playerStatus w-100"></p>
+                <div class="playerCards w-100 d-flex justify-content-center">
+                  <div class="playerCard">
+                    <div class="suit w-100"><img src="./assets/suit/spade.png" alt=""></div>
+                    <div class="rank w-100">7</div>
+                  </div>
+                  <div class="playerCard d-flex flex-wrap justify-content-center align-items-center">
+                    <div class="suit w-100"><img src="./assets/suit/diamond.png" alt=""></div>
+                    <div class="rank  w-100">8</div>
+                  </div>
+                  <div class="playerCard">
+                    <div class="suit w-100"><img src="./assets/suit/heart.png" alt=""></div>
+                    <div class="rank w-100">10</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="betContents">
+              <div class="betForm d-flex flex-wrap text-center">
+                <div id="bet-5" class="betContent d-flex flex-wrap justify-content-center">
+                  <button id="minus" class="btn btn-primary">-</button>
+                  <input type="number" name="betNumber" id="">
+                  <button id="plus" class="btn btn-danger">+</button>
+                  <div class="w-100">
+                    <p>5</p>
+                  </div>
+                </div>
+                <div id="bet-20" class="betContent d-flex flex-wrap justify-content-center">
+                  <button id="minus" class="btn btn-primary">-</button>
+                  <input type="number" name="betNumber" id="">
+                  <button id="plus" class="btn btn-danger">+</button>
+                  <div class="w-100">
+                    <p>20</p>
+                  </div>
+                </div>
+                <div id="bet-50" class="betContent d-flex flex-wrap justify-content-center">
+                  <button id="minus" class="btn btn-primary">-</button>
+                  <input type="number" name="betNumber" id="">
+                  <button id="plus" class="btn btn-danger">+</button>
+                  <div class="w-100">
+                    <p>50</p>
+                  </div>
+                </div>
+                <div id="bet-100" class="betContent d-flex flex-wrap justify-content-center">
+                  <button id="minus" class="btn btn-primary">-</button>
+                  <input type="number" name="betNumber" id="">
+                  <button id="plus" class="btn btn-danger">+</button>
+                  <div class="w-100">
+                    <p>100</p>
+                  </div>
+                </div>
+                <div class="betButton w-100">
+                  <button class="btn btn-info">ベットする</button>
+                </div>
+              </div>
+            </div>
+            <div class="actionContents">
+              <div class="actionForm d-flex flex-wrap justify-content-between text-center">
+                <div id="a-surrender" class="actionContent">
+                  <button class="btn btn-info">Surrender</button>
+                </div>
+                <div id="a-stand" class="actionContent">
+                  <button class="btn btn-success">Stand</button>
+                </div>
+                <div id="a-hit" class="actionContent">
+                  <button class="btn btn-light">Hit</button>
+                </div>
+                <div id="a-double" class="actionContent">
+                  <button class="btn btn-danger">Double</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> -->
+  </div>
+</body>
+</html>
