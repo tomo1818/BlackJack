@@ -1,0 +1,86 @@
+.w-100 {
+  width: 100%;
+}
+
+.h-100 {
+  height: 100%;
+}
+
+.vh-100 {
+  height: 100vh;
+}
+
+.main-bg {
+  background-image: url("../assets/blackjack_bg.png");
+  background-size: cover;
+  background-position: center;
+}
+
+body p {
+  margin-bottom: 0;
+}
+
+.gameTable-bg {
+  background-color: #1D4434;
+}
+
+.gameTable .playerContents {
+  width: 30%;
+}
+
+.gameTable .playerContents .playerName {
+  font-weight: bold;
+  font-size: 40px;
+  color: white;
+}
+
+.gameTable .playerContents .playerCards .playerCard {
+  width: 20%;
+  margin-right: 15px;
+  background-color: white;
+}
+
+.gameTable .playerContents .playerCards .playerCard .suit img {
+  width: 100%;
+}
+
+.gameTable .playerContents .playerCards .playerCard:last-child {
+  margin-right: 0;
+}
+
+.gameTable .house {
+  margin-bottom: 50px;
+}
+
+.betContents {
+  width: 60%;
+  margin: 0 auto;
+}
+
+.betContents .betForm {
+  color: white;
+}
+
+.betContents .betForm .betContent {
+  width: calc((100% - 60px) / 4);
+  margin-right: 20px;
+}
+
+.betContents .betForm .betContent:nth-child(4) {
+  margin-right: 0;
+}
+
+.betContents .betForm input {
+  width: 38px;
+  height: auto;
+}
+
+.betContents .betForm .betButton {
+  margin-top: 30px;
+}
+
+.actionForm {
+  width: 60%;
+  margin: 0 auto;
+}
+/*# sourceMappingURL=style.css.map */

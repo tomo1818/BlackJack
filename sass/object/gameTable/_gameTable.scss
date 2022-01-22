@@ -1,0 +1,35 @@
+.gameTable-bg {
+  background-color: #1D4434;
+}
+
+.gameTable {
+  .playerContents {
+    width: 30%;
+
+    .playerName {
+      font-weight: bold;
+      font-size: 40px;
+      color: white;
+    }
+
+    .playerCards {
+      .playerCard {
+        width: 20%;
+        margin-right: 15px;
+        background-color: white;
+
+        .suit img {
+          width: 100%;
+        }
+
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+
+  .house {
+    margin-bottom: 50px;
+  }
+}
