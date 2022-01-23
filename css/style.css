@@ -20,6 +20,14 @@ body p {
   margin-bottom: 0;
 }
 
+body .hide {
+  display: none !important;
+}
+
+body .show {
+  display: block !important;
+}
+
 .gameTable-bg {
   background-color: #1D4434;
 }
@@ -53,7 +61,8 @@ body p {
 }
 
 .betContents {
-  width: 60%;
+  width: 80%;
+  max-width: 700px;
   margin: 0 auto;
 }
 
@@ -71,8 +80,9 @@ body p {
 }
 
 .betContents .betForm input {
-  width: 38px;
+  width: 50px;
   height: auto;
+  text-align: center;
 }
 
 .betContents .betForm .betButton {
@@ -80,7 +90,8 @@ body p {
 }
 
 .actionForm {
-  width: 60%;
+  width: 80%;
+  max-width: 700px;
   margin: 0 auto;
 }
 /*# sourceMappingURL=style.css.map */

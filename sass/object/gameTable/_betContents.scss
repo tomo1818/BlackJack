@@ -1,5 +1,6 @@
 .betContents {
-  width: 60%;
+  width: 80%;
+  max-width: 700px;
   margin: 0 auto;
 
   .betForm {
@@ -15,8 +16,9 @@
     }
 
     input {
-      width: 38px;
+      width: 50px;
       height: auto;
+      text-align: center;
     }
 
     .betButton {

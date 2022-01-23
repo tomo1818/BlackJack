@@ -1,13 +1,22 @@
 {
   "compilerOptions": {
     "target": "es2015",
-    "module": "commonjs",
-    "lib": ["dom", "es2015"],
+    "module": "umd",
+    "lib": [
+      "ES5",
+      "ES2016",
+      "DOM",
+      "ScriptHost"
+    ],
     "sourceMap": true,
     "outDir": "dist",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "noUnusedLocals": true, // 未使用のローカル変数 を エラー報告
+    "noUnusedParameters": true, // 未使用のパラメーター を エラー報告
+    "noImplicitReturns": true, // 不正確な return を エラー報告
+    "noFallthroughCasesInSwitch": true, // case 文 の フォールスルー を エラー報告
     "forceConsistentCasingInFileNames": true
   },
   "include": [

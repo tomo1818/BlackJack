@@ -129,6 +129,7 @@ export class Table {
 
     // 5: turnCounterを増加させる
     this.turnCounter++;
+    if (this.turnCounter == 3) this.gamePhase = "acting";
     if (this.allPlayerActionsResolved()) this.gamePhase = "roundOver";
     if (this.turnCounter >= 10) this.gamePhase = "roundOver";
   }
