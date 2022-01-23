@@ -77,12 +77,12 @@ export class View {
   private updatePlayersInfo(type: string): void {
     let players: Player[] = this.table.players;
     for (let i = 0; i < players.length; i++) {
-      this.updatePlayerInfo(players[i], type);
+      this.updatePlayerInfo(players[i], type, i);
     }
   }
 
-  private updatePlayerInfo(player: Player,type: string): void {
-    let tmpComponent = (type === "create") ? this.createPlayerComponent() : (player.name != "house") ? document.getElementsByClassName("playerContents")[this.table.turnCounter % 3 + 1] : document.getElementsByClassName("playerContents")[0];
+  private updatePlayerInfo(player: Player,type: string, index: number): void {
+    let tmpComponent = (type === "create") ? this.createPlayerComponent() : document.getElementsByClassName("playerContents")[index];
     tmpComponent.getElementsByClassName("playerName")[0].innerHTML = player.name;
     tmpComponent.getElementsByClassName("playerStatus")[0].innerHTML = "S: " + player.gameStatus + " B: " + player.bet + " C: " + player.chips;
     let cardsComponent = tmpComponent.getElementsByClassName("playerCards")[0];
@@ -148,15 +148,20 @@ export class View {
   }
 
   private roundAction(): void {
-    let i = 1;
     while (this.table.gamePhase != "roundOver") {
       this.table.haveTurn({ action: "action", "bet": 0 });
-      this.updatePlayerInfo(this.table.getTurnPlayer, "action");
-      i++;
+      this.updatePlayerInfo(this.table.getTurnPlayer, "action", this.table.turnCounter % 3 + 1);
+      delay(5000);
     }
 
     this.table.houseTurn();
-    this.updatePlayerInfo(this.table.players[0], "action");
+    this.updatePlayersInfo("action");
     this.table.blackjackEvaluateAndGetRoundResults();
   }
+}
+
+function delay(ms: number) {
+  return new Promise((resolve) => {
+    return setTimeout(resolve, ms);
+  });
 }

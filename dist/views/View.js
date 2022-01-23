@@ -82,11 +82,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         updatePlayersInfo(type) {
             let players = this.table.players;
             for (let i = 0; i < players.length; i++) {
-                this.updatePlayerInfo(players[i], type);
+                this.updatePlayerInfo(players[i], type, i);
             }
         }
-        updatePlayerInfo(player, type) {
-            let tmpComponent = (type === "create") ? this.createPlayerComponent() : (player.name != "house") ? document.getElementsByClassName("playerContents")[this.table.turnCounter % 3 + 1] : document.getElementsByClassName("playerContents")[0];
+        updatePlayerInfo(player, type, index) {
+            let tmpComponent = (type === "create") ? this.createPlayerComponent() : document.getElementsByClassName("playerContents")[index];
             tmpComponent.getElementsByClassName("playerName")[0].innerHTML = player.name;
             tmpComponent.getElementsByClassName("playerStatus")[0].innerHTML = "S: " + player.gameStatus + " B: " + player.bet + " C: " + player.chips;
             let cardsComponent = tmpComponent.getElementsByClassName("playerCards")[0];
@@ -144,17 +144,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             }
         }
         roundAction() {
-            let i = 1;
             while (this.table.gamePhase != "roundOver") {
                 this.table.haveTurn({ action: "action", "bet": 0 });
-                this.updatePlayerInfo(this.table.getTurnPlayer, "action");
-                i++;
+                this.updatePlayerInfo(this.table.getTurnPlayer, "action", this.table.turnCounter % 3 + 1);
+                delay(5000);
             }
             this.table.houseTurn();
-            this.updatePlayerInfo(this.table.players[0], "action");
+            this.updatePlayersInfo("action");
             this.table.blackjackEvaluateAndGetRoundResults();
         }
     }
     exports.View = View;
+    function delay(ms) {
+        return new Promise((resolve) => {
+            return setTimeout(resolve, ms);
+        });
+    }
 });
 //# sourceMappingURL=View.js.map
