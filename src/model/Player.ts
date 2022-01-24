@@ -44,14 +44,13 @@ export class Player {
     if (this.type === "ai") decision = this.getAiBetDecision();
     else if (this.type === "user") decision = new GameDecision("acting", userData.bet);
     else decision = new GameDecision("acting", 0);
-    //TODO: ここから挙動をコードしてください。
     this.bet = decision.amount;
     return decision;
   }
 
   public roundAction(table: Table, userData: UserData): GameDecision {
     let decision: GameDecision = {action: "", amount: 0};
-    if (this.type === "ai") decision = this.getAiRoundDecision(table);
+    if (this.type === "ai") decision = this.getAiRoundDecision();
     else if (this.type === "user") decision = new GameDecision(userData.action, userData.bet);
     else decision = new GameDecision("bet", 0);
     this.doRoundAction(table, decision);
@@ -92,20 +91,15 @@ export class Player {
     else if (currChips >= 5) fives += 5 * Math.floor(Math.random() * (1 + 1));
     bettingAmounts += fives;
     currChips -= fives;
-    // this.chips = currChips;
 
     return new GameDecision("acting", bettingAmounts);
   }
 
-  public getAiRoundDecision(table: Table): GameDecision {
+  public getAiRoundDecision(): GameDecision {
     let decision = new GameDecision("", 0);
     let currHandScore = this.getHandScore();
     if (currHandScore >= 15) decision.action = "stand";
     else decision.action = "hit";
-    // if (decision.action == "hit") {
-    //   this.hand.push(table.deck.drawOne);
-    //   if (this.hand.length == 4) decision.action = "stand";
-    // }
     return new GameDecision(decision.action, 0);
   }
 

@@ -32,6 +32,10 @@ body .show {
   font-family: 'Bangers', cursive;
 }
 
+.resultForm {
+  max-height: 200px;
+}
+
 .gameTable-bg {
   background-color: #1D4434;
 }

@@ -6,19 +6,13 @@ export class Deck {
   private cards: Card[];
 
   constructor(gameType: string) {
-    // このデッキが扱うゲームタイプ
     this.gameType = gameType;
-
-    // カードの配列
     this.cards = [];
-
-    // ゲームタイプによって、カードを初期化してください。
     this.resetDeck();
   }
 
   public resetDeck(): void {
     this.cards = [];
-    //TODO: ここから挙動をコードしてください。
     for (let i = 0; i < suit.length; i++) {
       for (let j = 0; j < rank.length; j++) {
         this.cards.push(new Card(suit[i], rank[j]));
@@ -28,7 +22,6 @@ export class Deck {
 
   public shuffle(): void {
     let cardsLen = this.cards.length;
-    //TODO: ここから挙動をコードしてください。
     for (let i = 0; i < this.cards.length; i++) {
       let curr = this.cards[i];
       let ranNum = Math.floor(Math.random() * (cardsLen - 1 - i) + i);

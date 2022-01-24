@@ -37,7 +37,6 @@ export class Table {
   }
 
   public evaluateMove(Player: Player): void {
-    //TODO: ここから挙動をコードしてください。
     let score = Player.getHandScore();
     if (score > 21) {
       Player.gameStatus = "bust";
@@ -97,24 +96,17 @@ export class Table {
   }
 
   public get getTurnPlayer() {
-    //TODO: ここから挙動をコードしてください。
     return this.players[(this.turnCounter % 3)];
   }
 
-  /*
-       Number userData : テーブルモデルの外部から渡されるデータです。
-       return Null : このメソッドはテーブルの状態を更新するだけで、値を返しません。
-    */
   public haveTurn(userData: UserData) {
     // {'betting', 'acting', 'evaluatingWinners, gameOver'}
-    //TODO: ここから挙動をコードしてください。
     // 1: テーブルのgamePhaseをチェック
     let currPhase = this.gamePhase;
     // 2: getTurnPlayer()で現在のプレイヤーを取得
     let currPlayer = this.getTurnPlayer;
     // 3: Player.promptPlayer()でプレイヤーのアクションを行う。
     currPlayer.promptPlayer(this, userData);
-
     // 4: evaluateMove()でプレイヤーの状態を評価
     for (let i = 0; i < this.players.length; i++)
       this.evaluateMove(this.players[i]);
@@ -126,9 +118,6 @@ export class Table {
     if (this.turnCounter >= 10) this.gamePhase = "roundOver";
   }
 
-  /*
-        return Boolean : テーブルがプレイヤー配列の最初のプレイヤーにフォーカスされている場合はtrue、そうでない場合はfalseを返します。
-    */
   public onFirstPlayer(): boolean {
     //TODO: ここから挙動をコードしてください。
     if (this.turnCounter % 3 === 0) return true;
@@ -136,7 +125,6 @@ export class Table {
   }
 
   public onLastPlayer(): boolean {
-    //TODO: ここから挙動をコードしてください。
     if (this.turnCounter % 3 === 2) return true;
     else return false;
   }
