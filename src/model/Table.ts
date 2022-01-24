@@ -25,7 +25,7 @@ export class Table {
 
     this.house = new Player("house", "house", this.gameType);
     console.log(userData);
-    if (userData != "") {
+    if (userData !== "") {
       this.players.push(new Player(userData, "user", this.gameType));
     }
     while (this.players.length < 3) {
@@ -37,21 +37,21 @@ export class Table {
   }
 
   public evaluateMove(Player: Player): void {
-    let score = Player.getHandScore();
+    const score = Player.getHandScore();
     if (score > 21) {
       Player.gameStatus = "bust";
     }
   }
 
   public blackjackEvaluateAndGetRoundResults() {
-    let house = this.house
-    let houseScore = house.getHandScore();
-    let isBlackJack = this.isBlackJack(house);
+    const house = this.house
+    const houseScore = house.getHandScore();
+    const isBlackJack = this.isBlackJack(house);
     for (let i = 0; i < this.players.length; i++) {
-      let curr = this.players[i];
-      let currScore = this.players[i].getHandScore();
+      const curr = this.players[i];
+      const currScore = this.players[i].getHandScore();
       let result = "";
-      if (curr.gameStatus == "bust") {
+      if (curr.gameStatus === "bust") {
         result = "name: " + curr.name + ", action: " + curr.gameStatus + ", bet: " + String(curr.bet) + ", win: " + "-" + String(curr.bet);
         curr.chips -= curr.bet;
       } else if (isBlackJack) {
@@ -61,9 +61,11 @@ export class Table {
           result = "name: " + curr.name + ", action: " + curr.gameStatus + ", bet: " + String(curr.bet) + ", win: " + "-" + String(curr.bet);
           curr.chips -= curr.bet;
         }
-      } else if (house.gameStatus == "bust" || houseScore < currScore) {
+      } else if (house.gameStatus === "bust" || houseScore < currScore) {
         result = "name: " + curr.name + ", action: " + curr.gameStatus + ", bet: " + String(curr.bet) + ", win: " + String(curr.bet * (this.isBlackJack(curr) ? 1.5 : 1));
         curr.chips += curr.bet * (this.isBlackJack(curr) ? 1.5 : 1)
+      } else if (curr.gameStatus === "surrender") {
+        result = "name: " + curr.name + ", action: " + curr.gameStatus;
       } else {
         result = "name: " + curr.name + ", action: " + curr.gameStatus + ", bet: " + String(curr.bet) + ", win: " + "-" + String(curr.bet);
         this.players[i].chips -= curr.bet;
@@ -102,9 +104,9 @@ export class Table {
   public haveTurn(userData: UserData) {
     // {'betting', 'acting', 'evaluatingWinners, gameOver'}
     // 1: テーブルのgamePhaseをチェック
-    let currPhase = this.gamePhase;
+    // const currPhase = this.gamePhase;
     // 2: getTurnPlayer()で現在のプレイヤーを取得
-    let currPlayer = this.getTurnPlayer;
+    const currPlayer = this.getTurnPlayer;
     // 3: Player.promptPlayer()でプレイヤーのアクションを行う。
     currPlayer.promptPlayer(this, userData);
     // 4: evaluateMove()でプレイヤーの状態を評価
@@ -113,13 +115,12 @@ export class Table {
 
     // 5: turnCounterを増加させる
     this.turnCounter++;
-    if (this.turnCounter == 3) this.gamePhase = "acting";
+    if (this.turnCounter === 3) this.gamePhase = "acting";
     if (this.allPlayerActionsResolved()) this.gamePhase = "roundOver";
     if (this.turnCounter >= 10) this.gamePhase = "roundOver";
   }
 
   public onFirstPlayer(): boolean {
-    //TODO: ここから挙動をコードしてください。
     if (this.turnCounter % 3 === 0) return true;
     else return false;
   }
@@ -137,7 +138,7 @@ export class Table {
   }
 
   public houseTurn() {
-    let house = this.house;
+    const house = this.house;
     while (house.getHandScore() < 17) {
       house.hand.push(this.deck.drawOne);
     }
@@ -149,7 +150,7 @@ export class Table {
   }
 
   public playersHands() {
-    for (let player of this.players) {
+    for (const player of this.players) {
       console.log("bet: " + player.bet, "score: " + player.getHandScore());
     }
   }
@@ -157,7 +158,9 @@ export class Table {
   public newGame() {
     this.blackjackClearPlayerHandsAndBets();
     this.turnCounter = 0;
+    this.gameCounter += 1;
     this.gamePhase = "betting";
+    this.resultLog = [];
     this.deck = new Deck(this.gameType);
     this.deck.shuffle();
     this.blackjackAssignPlayerHands();

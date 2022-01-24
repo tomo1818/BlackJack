@@ -12,9 +12,7 @@
     exports.GameDecision = void 0;
     class GameDecision {
         constructor(action, amount) {
-            // アクション
             this.action = action;
-            // プレイヤーが選択する数値
             this.amount = amount;
         }
     }

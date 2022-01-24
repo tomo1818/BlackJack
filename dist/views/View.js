@@ -61,7 +61,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
                     const playerAction = e.target.value;
                     this.roundAction(playerAction);
                     this.updatePlayersInfo("action"); // player
-                    if (this.table.players[0].hand.length == 4 || (playerAction === "stand" || playerAction === "surrender")) {
+                    if (this.table.players[0].gameStatus === "bust" || (playerAction === "stand" || playerAction === "surrender")) {
                         this.houseAction();
                         this.updatePlayerInfo(this.table.house, "action", 0); // house
                         this.updatePlayersInfo("action"); // player
@@ -81,6 +81,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         actionView() {
             this.betContents.classList.add("hide");
             this.actionContents.classList.remove("hide");
+            if (!this.isDoubleAction())
+                this.actionButtons[3].disabled = true;
+            else
+                this.actionButtons[3].disabled = false;
         }
         resultView() {
             this.actionContents.classList.add("hide");
@@ -136,7 +140,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             for (let i = 0; i < this.table.resultLog.length; i++) {
                 this.resultContents.querySelector(".resultText").append(this.createResultLog(this.table.resultLog[i]));
             }
-            // this.resultContents.querySelector(".resultText")!.innerHTML += this.table.resultLog;
         }
         createPlayerComponent() {
             let playerContents = document.createElement("div");
@@ -179,7 +182,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             return total;
         }
         roundAction(userAction) {
-            if (this.table.players[0].hand.length <= 3 && (userAction === "hit" || userAction === "double")) {
+            if (this.table.players[0].gameStatus !== "bust" && (userAction === "hit" || userAction === "double")) {
                 for (let i = 0; i < this.table.players.length; i++) {
                     this.table.haveTurn({ action: userAction, bet: 0 });
                     this.updatePlayerInfo(this.table.getTurnPlayer, "action", this.table.turnCounter % 3 + 1);
@@ -192,6 +195,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
                 }
             }
         }
+        isDoubleAction() {
+            return (this.table.players[0].bet * 2 <= this.table.players[0].chips);
+        }
         createResultLog(log) {
             let logTag = document.createElement("p");
             logTag.innerHTML = log;
@@ -201,7 +207,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             this.table.newGame();
         }
         houseAction() {
+            this.openCard();
             this.table.houseTurn();
+        }
+        openCard() {
+            this.housePlayer.getElementsByClassName("playerCard")[1].classList.add("cardOpen");
         }
     }
     exports.View = View;

@@ -21,17 +21,17 @@ export class Deck {
   }
 
   public shuffle(): void {
-    let cardsLen = this.cards.length;
+    const cardsLen = this.cards.length;
     for (let i = 0; i < this.cards.length; i++) {
-      let curr = this.cards[i];
-      let ranNum = Math.floor(Math.random() * (cardsLen - 1 - i) + i);
+      const curr = this.cards[i];
+      const ranNum = Math.floor(Math.random() * (cardsLen - 1 - i) + i);
       this.cards[i] = this.cards[ranNum];
       this.cards[ranNum] = curr;
     }
   }
 
   public get drawOne(): Card {
-    let topCard: Card = this.cards[0];
+    const topCard: Card = this.cards[0];
     this.cards.shift()
     return topCard;
   }

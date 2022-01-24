@@ -26,13 +26,13 @@ export class Player {
 
   public promptPlayer(table: Table, userData: UserData): void {
     let decision: GameDecision;
-    if (this.gameStatus == "betting") {
+    if (this.gameStatus === "betting") {
       decision = this.betAction(userData);
       this.gameStatus = decision.action;
     } else if (
-      this.gameStatus == "acting" ||
-      this.gameStatus == "hit" ||
-      this.gameStatus == "double"
+      this.gameStatus === "acting" ||
+      this.gameStatus === "hit" ||
+      this.gameStatus === "double"
     ) {
       decision = this.roundAction(table, userData);
       this.gameStatus = decision.action;
@@ -96,17 +96,23 @@ export class Player {
   }
 
   public getAiRoundDecision(): GameDecision {
-    let decision = new GameDecision("", 0);
-    let currHandScore = this.getHandScore();
+    const decision = new GameDecision("", 0);
+    const currHandScore = this.getHandScore();
     if (currHandScore >= 15) decision.action = "stand";
     else decision.action = "hit";
     return new GameDecision(decision.action, 0);
   }
 
   public doRoundAction(table: Table, gameDecision: GameDecision) {
-    if (gameDecision.action === "hit") {
+    if (gameDecision.action === "hit" || gameDecision.action === "double") {
       this.hand.push(table.deck.drawOne);
-      if (this.hand.length == 4) gameDecision.action = "stand";
+      if (gameDecision.action === "double") {
+        this.bet *= 2;
+      }
+      // if (this.hand.length === 4) gameDecision.action = "stand";
+    } else if (gameDecision.action === "surrender") {
+      this.chips -= this.bet;
+      this.bet = 0;
     }
   }
 }

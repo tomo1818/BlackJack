@@ -53,7 +53,7 @@ export class View {
         const playerAction = (e.target! as HTMLButtonElement).value;
         this.roundAction(playerAction);
         this.updatePlayersInfo("action"); // player
-        if (this.table.players[0].hand.length == 4 || (playerAction === "stand" || playerAction === "surrender")) {
+        if (this.table.players[0].gameStatus === "bust" || (playerAction === "stand" || playerAction === "surrender")) {
           this.houseAction();
           this.updatePlayerInfo(this.table.house, "action", 0); // house
           this.updatePlayersInfo("action"); // player
@@ -76,6 +76,8 @@ export class View {
   private actionView(): void {
     this.betContents.classList.add("hide");
     this.actionContents.classList.remove("hide");
+    if (!this.isDoubleAction()) (this.actionButtons[3] as HTMLButtonElement).disabled = true;
+    else (this.actionButtons[3] as HTMLButtonElement).disabled = false;
   }
 
   private resultView(): void {
@@ -138,7 +140,6 @@ export class View {
     for (let i = 0; i < this.table.resultLog.length; i++) {
       this.resultContents.querySelector(".resultText")!.append(this.createResultLog(this.table.resultLog[i]));
     }
-    // this.resultContents.querySelector(".resultText")!.innerHTML += this.table.resultLog;
   }
 
   private createPlayerComponent(): HTMLElement {
@@ -186,12 +187,11 @@ export class View {
     for (let i = 0; i < betInputContents.length; i++) {
       total += Number((betInputContents[i]! as HTMLInputElement).value) * Number(this.betContent[i].querySelector("p")!.innerHTML);
     }
-
     return total;
   }
 
   private roundAction(userAction: string): void {
-    if (this.table.players[0].hand.length <= 3 && (userAction === "hit" || userAction === "double")) {
+    if (this.table.players[0].gameStatus !== "bust" && (userAction === "hit" || userAction === "double")) {
       for (let i = 0; i < this.table.players.length; i++) {
         this.table.haveTurn({ action: userAction, bet: 0 });
         this.updatePlayerInfo(this.table.getTurnPlayer, "action", this.table.turnCounter % 3 + 1);
@@ -202,6 +202,10 @@ export class View {
         this.updatePlayerInfo(this.table.getTurnPlayer, "action", this.table.turnCounter % 3 + 1);
       }
     }
+  }
+
+  private isDoubleAction(): boolean {
+    return (this.table.players[0].bet * 2 <= this.table.players[0].chips)
   }
 
   private createResultLog(log: string): HTMLElement {
@@ -215,6 +219,11 @@ export class View {
   }
 
   private houseAction(): void {
+    this.openCard();
     this.table.houseTurn();
+  }
+
+  private openCard(): void {
+    this.housePlayer.getElementsByClassName("playerCard")[1].classList.add("cardOpen")
   }
 }

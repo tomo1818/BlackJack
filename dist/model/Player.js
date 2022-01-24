@@ -25,13 +25,13 @@
         }
         promptPlayer(table, userData) {
             let decision;
-            if (this.gameStatus == "betting") {
+            if (this.gameStatus === "betting") {
                 decision = this.betAction(userData);
                 this.gameStatus = decision.action;
             }
-            else if (this.gameStatus == "acting" ||
-                this.gameStatus == "hit" ||
-                this.gameStatus == "double") {
+            else if (this.gameStatus === "acting" ||
+                this.gameStatus === "hit" ||
+                this.gameStatus === "double") {
                 decision = this.roundAction(table, userData);
                 this.gameStatus = decision.action;
             }
@@ -44,14 +44,13 @@
                 decision = new GameDecision_1.GameDecision("acting", userData.bet);
             else
                 decision = new GameDecision_1.GameDecision("acting", 0);
-            //TODO: ここから挙動をコードしてください。
             this.bet = decision.amount;
             return decision;
         }
         roundAction(table, userData) {
             let decision = { action: "", amount: 0 };
             if (this.type === "ai")
-                decision = this.getAiRoundDecision(table);
+                decision = this.getAiRoundDecision();
             else if (this.type === "user")
                 decision = new GameDecision_1.GameDecision(userData.action, userData.bet);
             else
@@ -95,27 +94,28 @@
                 fives += 5 * Math.floor(Math.random() * (1 + 1));
             bettingAmounts += fives;
             currChips -= fives;
-            // this.chips = currChips;
             return new GameDecision_1.GameDecision("acting", bettingAmounts);
         }
-        getAiRoundDecision(table) {
-            let decision = new GameDecision_1.GameDecision("", 0);
-            let currHandScore = this.getHandScore();
+        getAiRoundDecision() {
+            const decision = new GameDecision_1.GameDecision("", 0);
+            const currHandScore = this.getHandScore();
             if (currHandScore >= 15)
                 decision.action = "stand";
             else
                 decision.action = "hit";
-            // if (decision.action == "hit") {
-            //   this.hand.push(table.deck.drawOne);
-            //   if (this.hand.length == 4) decision.action = "stand";
-            // }
             return new GameDecision_1.GameDecision(decision.action, 0);
         }
         doRoundAction(table, gameDecision) {
-            if (gameDecision.action === "hit") {
+            if (gameDecision.action === "hit" || gameDecision.action === "double") {
                 this.hand.push(table.deck.drawOne);
-                if (this.hand.length == 4)
-                    gameDecision.action = "stand";
+                if (gameDecision.action === "double") {
+                    this.bet *= 2;
+                }
+                // if (this.hand.length === 4) gameDecision.action = "stand";
+            }
+            else if (gameDecision.action === "surrender") {
+                this.chips -= this.bet;
+                this.bet = 0;
             }
         }
     }
