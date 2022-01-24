@@ -21,22 +21,34 @@ export class View {
 
   private resultContents = document.getElementById("resultContents") as HTMLElement;
 
-  constructor() {
-    this.table = new Table("blackjack");
+  private nextGameButtonContents = document.getElementById("nextGameButtonContents") as HTMLElement;
+  private nextGameButton = document.getElementById("nextGameButton") as HTMLElement;
+
+  constructor(userData: string) {
+    this.table = new Table("blackjack", userData);
     this.firstView();
     this.firstController();
   }
 
   private firstView() {
     this.firstForm.classList.add("hide");
+    this.updatePlayerInfo(this.table.house ,"create", 0);
     this.updatePlayersInfo("create");
     this.gameTable.classList.remove("hide");
   }
+
+  // private secondView(): void {
+  //   this.firstForm.classList.add("hide");
+  //   this.updatePlayerInfo(this.table.house, "next", 0);
+  //   this.updatePlayersInfo("next");
+  //   this.gameTable.classList.remove("hide");
+  // }
 
   private firstController(): void {
     // betButtonのクリックイベント
     this.betButton.addEventListener("click", async () => {
       this.betAction();
+      this.updatePlayerInfo(this.table.house, "bet", 0)
       this.updatePlayersInfo("bet");
       this.actionView();
     });
@@ -44,6 +56,10 @@ export class View {
     for (let i = 0; i < this.actionButtons.length; i++) {
       this.actionButtons[i].addEventListener("click", async () => {
         this.roundAction();
+        this.houseAction();
+        this.updatePlayerInfo(this.table.house, "action", 0); // house
+        this.updatePlayersInfo("action"); // player
+        this.table.blackjackEvaluateAndGetRoundResults();
         this.updateResult();
         this.resultView();
       });
@@ -62,6 +78,11 @@ export class View {
         tmp.querySelector("input")!.value = String(currNum + 1);
       });
     }
+
+    this.nextGameButton.addEventListener("click", async () => {
+      this.createNewGame();
+      this.nextGameView();
+    })
   }
 
   private actionView(): void {
@@ -72,12 +93,22 @@ export class View {
   private resultView(): void {
     this.actionContents.classList.add("hide");
     this.resultContents.classList.remove("hide");
+    this.nextGameButtonContents.classList.remove("hide");
+  }
+
+  private nextGameView(): void{
+    this.resultContents.classList.add("hide");
+    this.nextGameButtonContents.classList.add("hide");
+    this.resetPlayersInfo()
+
+    this.firstView();
+    this.betContents.classList.remove("hide");
   }
 
   private updatePlayersInfo(type: string): void {
     let players: Player[] = this.table.players;
     for (let i = 0; i < players.length; i++) {
-      this.updatePlayerInfo(players[i], type, i);
+      this.updatePlayerInfo(players[i], type, i + 1);
     }
   }
 
@@ -103,6 +134,11 @@ export class View {
     }
   }
 
+  private resetPlayersInfo(): void {
+    this.housePlayer.innerHTML = ""
+    this.normalPlayers.innerHTML = "";
+  }
+
   private updateResult(): void {
     this.resultContents.querySelector(".resultText")!.innerHTML += this.table.resultLog;
   }
@@ -125,6 +161,10 @@ export class View {
     return playerContents;
   }
 
+  private sleep(time: number) {
+    return new Promise(resolve => setTimeout(resolve, time));
+  }
+
   private createCardComponent(): HTMLElement {
     let container = document.createElement("div");
     container.classList.add("playerCard");
@@ -143,6 +183,7 @@ export class View {
   private betAction(): void {
     console.log("bet action");
     while (this.table.gamePhase === "betting") {
+      console.log("do bet");
       this.table.haveTurn({ action: "bet", "bet": 0 });
     }
   }
@@ -151,17 +192,14 @@ export class View {
     while (this.table.gamePhase != "roundOver") {
       this.table.haveTurn({ action: "action", "bet": 0 });
       this.updatePlayerInfo(this.table.getTurnPlayer, "action", this.table.turnCounter % 3 + 1);
-      delay(5000);
     }
-
-    this.table.houseTurn();
-    this.updatePlayersInfo("action");
-    this.table.blackjackEvaluateAndGetRoundResults();
   }
-}
 
-function delay(ms: number) {
-  return new Promise((resolve) => {
-    return setTimeout(resolve, ms);
-  });
+  private createNewGame(): void {
+    this.table.newGame();
+  }
+
+  private houseAction(): void {
+    this.table.houseTurn();
+  }
 }

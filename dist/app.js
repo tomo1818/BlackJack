@@ -11,6 +11,9 @@
     Object.defineProperty(exports, "__esModule", { value: true });
     const View_1 = require("./views/View");
     const formButton = document.getElementById("formBtn");
-    formButton.addEventListener("click", () => new View_1.View());
+    formButton.addEventListener("click", () => {
+        const playerName = document.getElementById("playerName").value;
+        new View_1.View(playerName);
+    });
 });
 //# sourceMappingURL=app.js.map

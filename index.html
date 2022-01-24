@@ -20,7 +20,7 @@
         <div id="initialForm" class="initialForm">
           <p class="w-100 text-center text-white font-weight-bold">Black Jack</p>
           <div class="form-group mr-2">
-            <input class="form-control" type="text" placeholder="名前">
+            <input id="playerName" class="form-control" type="text" placeholder="名前">
           </div>
           <div class="form-group">
             <button id="formBtn" class="form-control btn btn-primary">スタート</button>
@@ -37,82 +37,12 @@
 
             <!-- house player -->
             <div id="house" class="house d-flex justify-content-center">
-              <!-- <div class="playerContents d-flex flex-wrap justify-content-center align-items-center text-center">
-                <p class="playerName w-100">Dealer</p>
-                <p class="playerStatus w-100"></p>
-                <div class="playerCards w-100 d-flex justify-content-center">
-                  <div class="playerCard">
-                    <div class="suit w-100"><img src="./assets/suit/spade.png" alt=""></div>
-                    <div class="rank w-100">7</div>
-                  </div>
-                  <div class="playerCard d-flex flex-wrap justify-content-center align-items-center">
-                    <div class="suit w-100"><img src="./assets/suit/diamond.png" alt=""></div>
-                    <div class="rank  w-100">8</div>
-                  </div>
-                  <div class="playerCard">
-                    <div class="suit w-100"><img src="./assets/suit/heart.png" alt=""></div>
-                    <div class="rank w-100">10</div>
-                  </div>
-                </div>
-              </div> -->
+
             </div>
 
             <!-- player -->
             <div id="players" class="players d-flex justify-content-center mb-5">
-              <!-- <div class="playerContents d-flex flex-wrap justify-content-center align-items-center text-center">
-                <p class="playerName w-100">Dealer</p>
-                <p class="playerStatus w-100"></p>
-                <div class="playerCards w-100 d-flex justify-content-center">
-                  <div class="playerCard">
-                    <div class="suit w-100"><img src="./assets/suit/spade.png" alt=""></div>
-                    <div class="rank w-100">7</div>
-                  </div>
-                  <div class="playerCard d-flex flex-wrap justify-content-center align-items-center">
-                    <div class="suit w-100"><img src="./assets/suit/diamond.png" alt=""></div>
-                    <div class="rank  w-100">8</div>
-                  </div>
-                  <div class="playerCard">
-                    <div class="suit w-100"><img src="./assets/suit/heart.png" alt=""></div>
-                    <div class="rank w-100">10</div>
-                  </div>
-                </div>
-              </div>
-              <div class="playerContents d-flex flex-wrap justify-content-center align-items-center text-center">
-                <p class="playerName w-100">Dealer</p>
-                <p class="playerStatus w-100"></p>
-                <div class="playerCards w-100 d-flex justify-content-center">
-                  <div class="playerCard">
-                    <div class="suit w-100"><img src="./assets/suit/spade.png" alt=""></div>
-                    <div class="rank w-100">7</div>
-                  </div>
-                  <div class="playerCard d-flex flex-wrap justify-content-center align-items-center">
-                    <div class="suit w-100"><img src="./assets/suit/diamond.png" alt=""></div>
-                    <div class="rank  w-100">8</div>
-                  </div>
-                  <div class="playerCard">
-                    <div class="suit w-100"><img src="./assets/suit/heart.png" alt=""></div>
-                    <div class="rank w-100">10</div>
-                  </div>
-                </div>
-              </div>
-              <div class="playerContents d-flex flex-wrap justify-content-center align-items-center text-center">
-                <p class="playerName w-100">Dealer</p>
-                <p class="playerStatus w-100"></p>
-                <div class="playerCards w-100 d-flex justify-content-center">
-                  <div class="playerCard">
-                    <div class="suit w-100"><img src="./assets/suit/spade.png" alt=""></div>
-                    <div class="rank w-100">7</div>
-                  </div>
-                  <div class="playerCard d-flex flex-wrap justify-content-center align-items-center">
-                    <div class="suit w-100"><img src="./assets/suit/diamond.png" alt=""></div>
-                    <div class="rank  w-100">8</div>
-                  </div>
-                  <div class="playerCard">
-                    <div class="suit w-100"><img src="./assets/suit/heart.png" alt=""></div>
-                    <div class="rank w-100">10</div>
-                  </div>
-                </div>
-              </div> -->
+
             </div>
 
             <!-- bet form -->
@@ -181,6 +111,10 @@
 
                 </div>
               </div>
+            </div>
+
+            <div id="nextGameButtonContents" class="hide">
+              <button id="nextGameButton" class="nextGameButton btn btn-primary">次のゲームへ</button>
             </div>
           </div>
         </div>

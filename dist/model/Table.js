@@ -14,7 +14,7 @@
     const Player_1 = require("./Player");
     const playerInfo_1 = require("../consts/playerInfo");
     class Table {
-        constructor(gameType, betDenominations = [5, 20, 50, 100], resultLog = []) {
+        constructor(gameType, userData, betDenominations = [5, 20, 50, 100], resultLog = []) {
             // ゲームタイプを表します。
             this.gameType = gameType;
             // プレイヤーが選択できるベットの単位。
@@ -28,10 +28,17 @@
             this.players = [];
             // プレイヤーをここで初期化してください。
             this.house = new Player_1.Player("house", "house", this.gameType);
-            this.players.push(this.house);
-            this.players.push(new Player_1.Player("ai_1", "ai", this.gameType));
-            this.players.push(new Player_1.Player("ai_2", "ai", this.gameType));
-            this.players.push(new Player_1.Player("ai_3", "ai", this.gameType));
+            // this.players.push(this.house);
+            console.log(userData);
+            if (userData != "") {
+                this.players.push(new Player_1.Player(userData, "user", this.gameType));
+            }
+            while (this.players.length < 3) {
+                this.players.push(new Player_1.Player("ai", "ai", this.gameType));
+            }
+            // this.players.push(new Player("ai_1", "ai", this.gameType));
+            // this.players.push(new Player("ai_2", "ai", this.gameType));
+            // this.players.push(new Player("ai_3", "ai", this.gameType));
             this.blackjackAssignPlayerHands();
             this.gamePhase = "betting";
             // これは各ラウンドの結果をログに記録するための文字列の配列です。
@@ -52,10 +59,10 @@
             }
         }
         blackjackEvaluateAndGetRoundResults() {
-            let house = this.players[0];
+            let house = this.house;
             let houseScore = house.getHandScore();
             let isBlackJack = this.isBlackJack(house);
-            for (let i = 1; i < this.players.length; i++) {
+            for (let i = 0; i < this.players.length; i++) {
                 let curr = this.players[i];
                 let currScore = this.players[i].getHandScore();
                 let result = "";
@@ -78,13 +85,16 @@
                 }
                 else {
                     result = "name: " + curr.name + ", action: " + curr.gameStatus + ", bet: " + String(curr.bet) + ", win: " + "-" + String(curr.bet);
-                    curr.chips -= curr.bet;
+                    this.players[i].chips -= curr.bet;
                 }
                 this.resultLog.push(result);
             }
         }
         blackjackAssignPlayerHands() {
             //TODO: ここから挙動をコードしてください。
+            for (let i = 0; i < 2; i++) {
+                this.house.hand.push(this.deck.drawOne);
+            }
             for (let i = 0; i < this.players.length; i++) {
                 for (let j = 0; j < 2; j++) {
                     this.players[i].hand.push(this.deck.drawOne);
@@ -96,12 +106,15 @@
             // this.players = this.players.map(value => []);
             for (let i = 0; i < this.players.length; i++) {
                 this.players[i].hand = [];
+                this.players[i].gameStatus = "betting";
                 this.players[i].bet = 0;
             }
+            this.house.hand = [];
+            this.house.bet = 0;
         }
         get getTurnPlayer() {
             //TODO: ここから挙動をコードしてください。
-            return this.players[(this.turnCounter % 3) + 1];
+            return this.players[(this.turnCounter % 3)];
         }
         /*
              Number userData : テーブルモデルの外部から渡されるデータです。
@@ -138,9 +151,6 @@
             else
                 return false;
         }
-        /*
-              return Boolean : テーブルがプレイヤー配列の最後のプレイヤーにフォーカスされている場合はtrue、そうでない場合はfalseを返します。
-          */
         onLastPlayer() {
             //TODO: ここから挙動をコードしてください。
             if (this.turnCounter % 3 === 2)
@@ -148,11 +158,7 @@
             else
                 return false;
         }
-        /*
-              全てのプレイヤーがセット{'broken', 'bust', 'stand', 'surrender'}のgameStatusを持っていればtrueを返し、持っていなければfalseを返します。
-          */
         allPlayerActionsResolved() {
-            //TODO: ここから挙動をコードしてください。
             for (let i = 1; i < this.players.length; i++) {
                 if (!playerInfo_1.playerStatus.includes(this.players[i].gameStatus))
                     return false;
@@ -172,9 +178,16 @@
         }
         playersHands() {
             for (let player of this.players) {
-                console.log(player.hand);
                 console.log("bet: " + player.bet, "score: " + player.getHandScore());
             }
+        }
+        newGame() {
+            this.blackjackClearPlayerHandsAndBets();
+            this.turnCounter = 0;
+            this.gamePhase = "betting";
+            this.deck = new Deck_1.Deck(this.gameType);
+            this.deck.shuffle();
+            this.blackjackAssignPlayerHands();
         }
     }
     exports.Table = Table;

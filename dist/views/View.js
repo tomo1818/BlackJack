@@ -22,7 +22,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     const cardElement_1 = require("../consts/cardElement");
     const Table_1 = require("../model/Table");
     class View {
-        constructor() {
+        constructor(userData) {
             this.firstForm = document.getElementById("initialFromContents");
             this.gameTable = document.getElementById("gameTable");
             this.gameTableContents = document.getElementById("gameTableContents");
@@ -34,25 +34,39 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             this.actionContents = document.getElementById("actionContents");
             this.actionButtons = document.getElementsByClassName("actionButton");
             this.resultContents = document.getElementById("resultContents");
-            this.table = new Table_1.Table("blackjack");
+            this.nextGameButtonContents = document.getElementById("nextGameButtonContents");
+            this.nextGameButton = document.getElementById("nextGameButton");
+            this.table = new Table_1.Table("blackjack", userData);
             this.firstView();
             this.firstController();
         }
         firstView() {
             this.firstForm.classList.add("hide");
+            this.updatePlayerInfo(this.table.house, "create", 0);
             this.updatePlayersInfo("create");
             this.gameTable.classList.remove("hide");
         }
+        // private secondView(): void {
+        //   this.firstForm.classList.add("hide");
+        //   this.updatePlayerInfo(this.table.house, "next", 0);
+        //   this.updatePlayersInfo("next");
+        //   this.gameTable.classList.remove("hide");
+        // }
         firstController() {
             // betButtonのクリックイベント
             this.betButton.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
                 this.betAction();
+                this.updatePlayerInfo(this.table.house, "bet", 0);
                 this.updatePlayersInfo("bet");
                 this.actionView();
             }));
             for (let i = 0; i < this.actionButtons.length; i++) {
                 this.actionButtons[i].addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
                     this.roundAction();
+                    this.houseAction();
+                    this.updatePlayerInfo(this.table.house, "action", 0); // house
+                    this.updatePlayersInfo("action"); // player
+                    this.table.blackjackEvaluateAndGetRoundResults();
                     this.updateResult();
                     this.resultView();
                 }));
@@ -70,6 +84,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
                     tmp.querySelector("input").value = String(currNum + 1);
                 });
             }
+            this.nextGameButton.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
+                this.createNewGame();
+                this.nextGameView();
+            }));
         }
         actionView() {
             this.betContents.classList.add("hide");
@@ -78,11 +96,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         resultView() {
             this.actionContents.classList.add("hide");
             this.resultContents.classList.remove("hide");
+            this.nextGameButtonContents.classList.remove("hide");
+        }
+        nextGameView() {
+            this.resultContents.classList.add("hide");
+            this.nextGameButtonContents.classList.add("hide");
+            this.resetPlayersInfo();
+            this.firstView();
+            this.betContents.classList.remove("hide");
         }
         updatePlayersInfo(type) {
             let players = this.table.players;
             for (let i = 0; i < players.length; i++) {
-                this.updatePlayerInfo(players[i], type, i);
+                this.updatePlayerInfo(players[i], type, i + 1);
             }
         }
         updatePlayerInfo(player, type, index) {
@@ -107,6 +133,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
                 }
             }
         }
+        resetPlayersInfo() {
+            this.housePlayer.innerHTML = "";
+            this.normalPlayers.innerHTML = "";
+        }
         updateResult() {
             this.resultContents.querySelector(".resultText").innerHTML += this.table.resultLog;
         }
@@ -125,6 +155,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             playerContents.append(playerName, playerStatus, playerCards);
             return playerContents;
         }
+        sleep(time) {
+            return new Promise(resolve => setTimeout(resolve, time));
+        }
         createCardComponent() {
             let container = document.createElement("div");
             container.classList.add("playerCard");
@@ -140,6 +173,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         betAction() {
             console.log("bet action");
             while (this.table.gamePhase === "betting") {
+                console.log("do bet");
                 this.table.haveTurn({ action: "bet", "bet": 0 });
             }
         }
@@ -147,18 +181,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             while (this.table.gamePhase != "roundOver") {
                 this.table.haveTurn({ action: "action", "bet": 0 });
                 this.updatePlayerInfo(this.table.getTurnPlayer, "action", this.table.turnCounter % 3 + 1);
-                delay(5000);
             }
+        }
+        createNewGame() {
+            this.table.newGame();
+        }
+        houseAction() {
             this.table.houseTurn();
-            this.updatePlayersInfo("action");
-            this.table.blackjackEvaluateAndGetRoundResults();
         }
     }
     exports.View = View;
-    function delay(ms) {
-        return new Promise((resolve) => {
-            return setTimeout(resolve, ms);
-        });
-    }
 });
 //# sourceMappingURL=View.js.map

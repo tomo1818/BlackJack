@@ -67,6 +67,7 @@ export class Player {
   public getAiBetDecision() {
     let bettingAmounts = 0;
     let currChips = this.chips;
+    console.log(currChips);
     let hundreds = 0;
     if (hundreds >= 100)
       hundreds += 100 * Math.floor(Math.random() * Math.floor(currChips / 100));
