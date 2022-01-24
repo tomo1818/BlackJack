@@ -8,7 +8,6 @@ export class View {
 
   private firstForm = document.getElementById("initialFromContents") as HTMLElement;
   private gameTable = document.getElementById("gameTable") as HTMLElement;
-  private gameTableContents = document.getElementById("gameTableContents") as HTMLElement;
 
   private betContents = document.getElementById("betContents") as HTMLElement;
   private betContent = document.getElementsByClassName("betContent");
@@ -42,20 +41,26 @@ export class View {
     // betButtonのクリックイベント
     this.betButton.addEventListener("click", async () => {
       this.betAction(this.getBetAmount);
-      this.updatePlayerInfo(this.table.house, "bet", 0)
-      this.updatePlayersInfo("bet");
+      this.updatePlayerInfo(this.table.house, "bet", 0) // house
+      this.updatePlayersInfo("bet"); // players
       this.actionView();
+      this.resetBetInputView();
     });
 
     for (let i = 0; i < this.actionButtons.length; i++) {
-      this.actionButtons[i].addEventListener("click", async () => {
-        this.roundAction();
-        this.houseAction();
-        this.updatePlayerInfo(this.table.house, "action", 0); // house
+      this.actionButtons[i].addEventListener("click", async (e) => {
+        console.log("action");
+        const playerAction = (e.target! as HTMLButtonElement).value;
+        this.roundAction(playerAction);
         this.updatePlayersInfo("action"); // player
-        this.table.blackjackEvaluateAndGetRoundResults();
-        this.updateResult();
-        this.resultView();
+        if (this.table.players[0].hand.length == 4 || (playerAction === "stand" || playerAction === "surrender")) {
+          this.houseAction();
+          this.updatePlayerInfo(this.table.house, "action", 0); // house
+          this.updatePlayersInfo("action"); // player
+          this.table.blackjackEvaluateAndGetRoundResults();
+          this.updateResult();
+          this.resultView();
+        }
       });
     }
 
@@ -86,6 +91,12 @@ export class View {
 
     this.firstView();
     this.betContents.classList.remove("hide");
+  }
+
+  private resetBetInputView(): void {
+    for (let i = 0; i < this.betContent.length; i++) {
+      this.betContent[i].querySelector("input")!.value = "0"
+    }
   }
 
   private updatePlayersInfo(type: string): void {
@@ -123,7 +134,11 @@ export class View {
   }
 
   private updateResult(): void {
-    this.resultContents.querySelector(".resultText")!.innerHTML += this.table.resultLog;
+    this.resultContents.querySelector(".resultText")!.append("Round: " + String(this.table.gameCounter));
+    for (let i = 0; i < this.table.resultLog.length; i++) {
+      this.resultContents.querySelector(".resultText")!.append(this.createResultLog(this.table.resultLog[i]));
+    }
+    // this.resultContents.querySelector(".resultText")!.innerHTML += this.table.resultLog;
   }
 
   private createPlayerComponent(): HTMLElement {
@@ -144,10 +159,6 @@ export class View {
     return playerContents;
   }
 
-  private sleep(time: number) {
-    return new Promise(resolve => setTimeout(resolve, time));
-  }
-
   private createCardComponent(): HTMLElement {
     let container = document.createElement("div");
     container.classList.add("playerCard");
@@ -165,25 +176,38 @@ export class View {
 
   private betAction(betAmount: number): void {
     while (this.table.gamePhase === "betting") {
-      console.log("do bet");
-      this.table.haveTurn({ action: "bet", "bet": betAmount });
+      this.table.haveTurn({ action: "bet", bet: betAmount });
     }
   }
 
   private get getBetAmount(): number {
     let total = 0;
-    for (let i = 0; i < this.betContent.length; i++) {
-      total += Number(this.betContent[i].querySelector("input")!.value) * Number(this.betContent[i].querySelector("p")!.innerHTML);
+    const betInputContents = document.getElementsByClassName("betInput");
+    for (let i = 0; i < betInputContents.length; i++) {
+      total += Number((betInputContents[i]! as HTMLInputElement).value) * Number(this.betContent[i].querySelector("p")!.innerHTML);
     }
 
     return total;
   }
 
-  private roundAction(): void {
-    while (this.table.gamePhase != "roundOver") {
-      this.table.haveTurn({ action: "action", "bet": 0 });
-      this.updatePlayerInfo(this.table.getTurnPlayer, "action", this.table.turnCounter % 3 + 1);
+  private roundAction(userAction: string): void {
+    if (this.table.players[0].hand.length <= 3 && (userAction === "hit" || userAction === "double")) {
+      for (let i = 0; i < this.table.players.length; i++) {
+        this.table.haveTurn({ action: userAction, bet: 0 });
+        this.updatePlayerInfo(this.table.getTurnPlayer, "action", this.table.turnCounter % 3 + 1);
+      }
+    } else {
+      while (this.table.gamePhase != "roundOver") {
+        this.table.haveTurn({ action: userAction, bet: 0 });
+        this.updatePlayerInfo(this.table.getTurnPlayer, "action", this.table.turnCounter % 3 + 1);
+      }
     }
+  }
+
+  private createResultLog(log: string): HTMLElement {
+    let logTag = document.createElement("p");
+    logTag.innerHTML = log;
+    return logTag;
   }
 
   private createNewGame(): void {

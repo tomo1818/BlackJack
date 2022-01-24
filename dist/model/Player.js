@@ -41,19 +41,22 @@
             if (this.type === "ai")
                 decision = this.getAiBetDecision();
             else if (this.type === "user")
-                decision = new GameDecision_1.GameDecision("bet", userData.bet);
+                decision = new GameDecision_1.GameDecision("acting", userData.bet);
             else
-                decision = new GameDecision_1.GameDecision("bet", 0);
+                decision = new GameDecision_1.GameDecision("acting", 0);
             //TODO: ここから挙動をコードしてください。
             this.bet = decision.amount;
             return decision;
         }
         roundAction(table, userData) {
-            let decision;
+            let decision = { action: "", amount: 0 };
             if (this.type === "ai")
                 decision = this.getAiRoundDecision(table);
+            else if (this.type === "user")
+                decision = new GameDecision_1.GameDecision(userData.action, userData.bet);
             else
-                decision = new GameDecision_1.GameDecision("action", userData.bet);
+                decision = new GameDecision_1.GameDecision("bet", 0);
+            this.doRoundAction(table, decision);
             return decision;
         }
         getHandScore() {
@@ -66,7 +69,6 @@
         getAiBetDecision() {
             let bettingAmounts = 0;
             let currChips = this.chips;
-            console.log(currChips);
             let hundreds = 0;
             if (hundreds >= 100)
                 hundreds += 100 * Math.floor(Math.random() * Math.floor(currChips / 100));
@@ -103,12 +105,18 @@
                 decision.action = "stand";
             else
                 decision.action = "hit";
-            if (decision.action == "hit") {
+            // if (decision.action == "hit") {
+            //   this.hand.push(table.deck.drawOne);
+            //   if (this.hand.length == 4) decision.action = "stand";
+            // }
+            return new GameDecision_1.GameDecision(decision.action, 0);
+        }
+        doRoundAction(table, gameDecision) {
+            if (gameDecision.action === "hit") {
                 this.hand.push(table.deck.drawOne);
                 if (this.hand.length == 4)
-                    decision.action = "stand";
+                    gameDecision.action = "stand";
             }
-            return new GameDecision_1.GameDecision(decision.action, 0);
         }
     }
     exports.Player = Player;

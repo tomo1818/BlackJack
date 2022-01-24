@@ -3,7 +3,7 @@ export const betInputController = function(): void {
 
   for (let i = 0; i < betInputs.length; i++) {
     betInputs[i].addEventListener('focusout', function (): void {
-      minMaxController(betInputs[i] as HTMLInputElement)
+      minMaxController(betInputs[i] as HTMLInputElement);
     });
   }
 }

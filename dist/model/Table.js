@@ -17,18 +17,15 @@
         constructor(gameType, userData, betDenominations = [5, 20, 50, 100], resultLog = []) {
             // ゲームタイプを表します。
             this.gameType = gameType;
-            // プレイヤーが選択できるベットの単位。
             this.betDenominations = betDenominations;
             // テーブルのカードのデッキ
             this.deck = new Deck_1.Deck(this.gameType);
             this.deck.shuffle();
+            this.gameCounter = 1;
             this.turnCounter = 0;
-            // プレイしているゲームに応じて、プレイヤー、gamePhases、ハウスの表現が異なるかもしれません。
-            // 今回はとりあえず3人のAIプレイヤーとハウス、「betting」フェースの始まりにコミットしましょう。
             this.players = [];
             // プレイヤーをここで初期化してください。
             this.house = new Player_1.Player("house", "house", this.gameType);
-            // this.players.push(this.house);
             console.log(userData);
             if (userData != "") {
                 this.players.push(new Player_1.Player(userData, "user", this.gameType));
@@ -36,21 +33,10 @@
             while (this.players.length < 3) {
                 this.players.push(new Player_1.Player("ai", "ai", this.gameType));
             }
-            // this.players.push(new Player("ai_1", "ai", this.gameType));
-            // this.players.push(new Player("ai_2", "ai", this.gameType));
-            // this.players.push(new Player("ai_3", "ai", this.gameType));
             this.blackjackAssignPlayerHands();
             this.gamePhase = "betting";
-            // これは各ラウンドの結果をログに記録するための文字列の配列です。
             this.resultLog = resultLog;
         }
-        /*
-              Player player : テーブルは、Player.promptPlayer()を使用してGameDecisionを取得し、GameDecisionとgameTypeに応じてPlayerの状態を更新します。
-              return Null : このメソッドは、プレーヤの状態を更新するだけです。
-      
-              EX:
-              プレイヤーが「ヒット」し、手札が21以上の場合、gameStatusを「バスト」に設定し、チップからベットを引きます。
-          */
         evaluateMove(Player) {
             //TODO: ここから挙動をコードしてください。
             let score = Player.getHandScore();
@@ -91,7 +77,6 @@
             }
         }
         blackjackAssignPlayerHands() {
-            //TODO: ここから挙動をコードしてください。
             for (let i = 0; i < 2; i++) {
                 this.house.hand.push(this.deck.drawOne);
             }
@@ -102,8 +87,6 @@
             }
         }
         blackjackClearPlayerHandsAndBets() {
-            //TODO: ここから挙動をコードしてください。
-            // this.players = this.players.map(value => []);
             for (let i = 0; i < this.players.length; i++) {
                 this.players[i].hand = [];
                 this.players[i].gameStatus = "betting";
@@ -166,7 +149,7 @@
             return true;
         }
         houseTurn() {
-            let house = this.players[0];
+            let house = this.house;
             while (house.getHandScore() < 17) {
                 house.hand.push(this.deck.drawOne);
             }

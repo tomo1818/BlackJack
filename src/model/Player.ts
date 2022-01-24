@@ -42,17 +42,19 @@ export class Player {
   public betAction(userData: UserData) {
     let decision: GameDecision;
     if (this.type === "ai") decision = this.getAiBetDecision();
-    else if (this.type === "user") decision = new GameDecision("bet", userData.bet);
-    else decision = new GameDecision("bet", 0);
+    else if (this.type === "user") decision = new GameDecision("acting", userData.bet);
+    else decision = new GameDecision("acting", 0);
     //TODO: ここから挙動をコードしてください。
     this.bet = decision.amount;
     return decision;
   }
 
   public roundAction(table: Table, userData: UserData): GameDecision {
-    let decision: GameDecision;
+    let decision: GameDecision = {action: "", amount: 0};
     if (this.type === "ai") decision = this.getAiRoundDecision(table);
-    else decision = new GameDecision("action", userData.bet);
+    else if (this.type === "user") decision = new GameDecision(userData.action, userData.bet);
+    else decision = new GameDecision("bet", 0);
+    this.doRoundAction(table, decision);
     return decision;
   }
 
@@ -68,7 +70,6 @@ export class Player {
   public getAiBetDecision() {
     let bettingAmounts = 0;
     let currChips = this.chips;
-    console.log(currChips);
     let hundreds = 0;
     if (hundreds >= 100)
       hundreds += 100 * Math.floor(Math.random() * Math.floor(currChips / 100));
@@ -101,10 +102,17 @@ export class Player {
     let currHandScore = this.getHandScore();
     if (currHandScore >= 15) decision.action = "stand";
     else decision.action = "hit";
-    if (decision.action == "hit") {
-      this.hand.push(table.deck.drawOne);
-      if (this.hand.length == 4) decision.action = "stand";
-    }
+    // if (decision.action == "hit") {
+    //   this.hand.push(table.deck.drawOne);
+    //   if (this.hand.length == 4) decision.action = "stand";
+    // }
     return new GameDecision(decision.action, 0);
+  }
+
+  public doRoundAction(table: Table, gameDecision: GameDecision) {
+    if (gameDecision.action === "hit") {
+      this.hand.push(table.deck.drawOne);
+      if (this.hand.length == 4) gameDecision.action = "stand";
+    }
   }
 }

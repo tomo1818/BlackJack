@@ -26,7 +26,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         constructor(userData) {
             this.firstForm = document.getElementById("initialFromContents");
             this.gameTable = document.getElementById("gameTable");
-            this.gameTableContents = document.getElementById("gameTableContents");
             this.betContents = document.getElementById("betContents");
             this.betContent = document.getElementsByClassName("betContent");
             this.betButton = document.getElementById("betButton");
@@ -51,19 +50,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             // betButtonのクリックイベント
             this.betButton.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
                 this.betAction(this.getBetAmount);
-                this.updatePlayerInfo(this.table.house, "bet", 0);
-                this.updatePlayersInfo("bet");
+                this.updatePlayerInfo(this.table.house, "bet", 0); // house
+                this.updatePlayersInfo("bet"); // players
                 this.actionView();
+                this.resetBetInputView();
             }));
             for (let i = 0; i < this.actionButtons.length; i++) {
-                this.actionButtons[i].addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
-                    this.roundAction();
-                    this.houseAction();
-                    this.updatePlayerInfo(this.table.house, "action", 0); // house
+                this.actionButtons[i].addEventListener("click", (e) => __awaiter(this, void 0, void 0, function* () {
+                    console.log("action");
+                    const playerAction = e.target.value;
+                    this.roundAction(playerAction);
                     this.updatePlayersInfo("action"); // player
-                    this.table.blackjackEvaluateAndGetRoundResults();
-                    this.updateResult();
-                    this.resultView();
+                    if (this.table.players[0].hand.length == 4 || (playerAction === "stand" || playerAction === "surrender")) {
+                        this.houseAction();
+                        this.updatePlayerInfo(this.table.house, "action", 0); // house
+                        this.updatePlayersInfo("action"); // player
+                        this.table.blackjackEvaluateAndGetRoundResults();
+                        this.updateResult();
+                        this.resultView();
+                    }
                 }));
             }
             this.nextGameButton.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
@@ -88,6 +93,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             this.resetPlayersInfo();
             this.firstView();
             this.betContents.classList.remove("hide");
+        }
+        resetBetInputView() {
+            for (let i = 0; i < this.betContent.length; i++) {
+                this.betContent[i].querySelector("input").value = "0";
+            }
         }
         updatePlayersInfo(type) {
             let players = this.table.players;
@@ -122,7 +132,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             this.normalPlayers.innerHTML = "";
         }
         updateResult() {
-            this.resultContents.querySelector(".resultText").innerHTML += this.table.resultLog;
+            this.resultContents.querySelector(".resultText").append("Round: " + String(this.table.gameCounter));
+            for (let i = 0; i < this.table.resultLog.length; i++) {
+                this.resultContents.querySelector(".resultText").append(this.createResultLog(this.table.resultLog[i]));
+            }
+            // this.resultContents.querySelector(".resultText")!.innerHTML += this.table.resultLog;
         }
         createPlayerComponent() {
             let playerContents = document.createElement("div");
@@ -139,9 +153,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             playerContents.append(playerName, playerStatus, playerCards);
             return playerContents;
         }
-        sleep(time) {
-            return new Promise(resolve => setTimeout(resolve, time));
-        }
         createCardComponent() {
             let container = document.createElement("div");
             container.classList.add("playerCard");
@@ -156,22 +167,35 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         }
         betAction(betAmount) {
             while (this.table.gamePhase === "betting") {
-                console.log("do bet");
-                this.table.haveTurn({ action: "bet", "bet": betAmount });
+                this.table.haveTurn({ action: "bet", bet: betAmount });
             }
         }
         get getBetAmount() {
             let total = 0;
-            for (let i = 0; i < this.betContent.length; i++) {
-                total += Number(this.betContent[i].querySelector("input").value) * Number(this.betContent[i].querySelector("p").innerHTML);
+            const betInputContents = document.getElementsByClassName("betInput");
+            for (let i = 0; i < betInputContents.length; i++) {
+                total += Number(betInputContents[i].value) * Number(this.betContent[i].querySelector("p").innerHTML);
             }
             return total;
         }
-        roundAction() {
-            while (this.table.gamePhase != "roundOver") {
-                this.table.haveTurn({ action: "action", "bet": 0 });
-                this.updatePlayerInfo(this.table.getTurnPlayer, "action", this.table.turnCounter % 3 + 1);
+        roundAction(userAction) {
+            if (this.table.players[0].hand.length <= 3 && (userAction === "hit" || userAction === "double")) {
+                for (let i = 0; i < this.table.players.length; i++) {
+                    this.table.haveTurn({ action: userAction, bet: 0 });
+                    this.updatePlayerInfo(this.table.getTurnPlayer, "action", this.table.turnCounter % 3 + 1);
+                }
             }
+            else {
+                while (this.table.gamePhase != "roundOver") {
+                    this.table.haveTurn({ action: userAction, bet: 0 });
+                    this.updatePlayerInfo(this.table.getTurnPlayer, "action", this.table.turnCounter % 3 + 1);
+                }
+            }
+        }
+        createResultLog(log) {
+            let logTag = document.createElement("p");
+            logTag.innerHTML = log;
+            return logTag;
         }
         createNewGame() {
             this.table.newGame();
