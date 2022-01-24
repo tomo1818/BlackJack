@@ -40,8 +40,10 @@
             let decision;
             if (this.type === "ai")
                 decision = this.getAiBetDecision();
-            else
+            else if (this.type === "user")
                 decision = new GameDecision_1.GameDecision("bet", userData.bet);
+            else
+                decision = new GameDecision_1.GameDecision("bet", 0);
             //TODO: ここから挙動をコードしてください。
             this.bet = decision.amount;
             return decision;

@@ -42,7 +42,8 @@ export class Player {
   public betAction(userData: UserData) {
     let decision: GameDecision;
     if (this.type === "ai") decision = this.getAiBetDecision();
-    else decision = new GameDecision("bet", userData.bet);
+    else if (this.type === "user") decision = new GameDecision("bet", userData.bet);
+    else decision = new GameDecision("bet", 0);
     //TODO: ここから挙動をコードしてください。
     this.bet = decision.amount;
     return decision;

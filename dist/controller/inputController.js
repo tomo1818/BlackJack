@@ -9,23 +9,17 @@
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.betButtonController = exports.betInputController = void 0;
+    exports.betAmountButtonController = exports.betInputController = void 0;
     const betInputController = function () {
         const betInputs = document.getElementsByClassName("betInput");
         for (let i = 0; i < betInputs.length; i++) {
             betInputs[i].addEventListener('focusout', function () {
-                // let tmp = betInputs[i] as HTMLInputElement
                 minMaxController(betInputs[i]);
-                // if (tmp.min !== "" && Number(tmp.value) < Number(tmp.min)) {
-                //   tmp.value = tmp.min;
-                // } else if (tmp.max !== "" && Number(tmp.value) > Number(tmp.max)) {
-                //   tmp.value = tmp.max;
-                // }
             });
         }
     };
     exports.betInputController = betInputController;
-    const betButtonController = function () {
+    const betAmountButtonController = function () {
         const betContent = document.getElementsByClassName("betContent");
         for (let i = 0; i < betContent.length; i++) {
             let tmp = betContent[i];
@@ -44,7 +38,7 @@
             });
         }
     };
-    exports.betButtonController = betButtonController;
+    exports.betAmountButtonController = betAmountButtonController;
     const minMaxController = function (element) {
         if (element.min !== "" && Number(element.value) < Number(element.min)) {
             element.value = element.min;

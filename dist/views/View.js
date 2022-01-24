@@ -40,8 +40,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             this.table = new Table_1.Table("blackjack", userData);
             this.firstView();
             this.firstController();
-            (0, inputController_1.betInputController)();
-            (0, inputController_1.betButtonController)();
         }
         firstView() {
             this.firstForm.classList.add("hide");
@@ -52,7 +50,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         firstController() {
             // betButtonのクリックイベント
             this.betButton.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
-                this.betAction();
+                this.betAction(this.getBetAmount);
                 this.updatePlayerInfo(this.table.house, "bet", 0);
                 this.updatePlayersInfo("bet");
                 this.actionView();
@@ -68,23 +66,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
                     this.resultView();
                 }));
             }
-            // for (let i = 0; i < this.betContent.length; i++) {
-            //   let tmp = this.betContent[i];
-            //   let minusButton = tmp.querySelector("#minus")!;
-            //   let plusButton = tmp.querySelector("#plus")!;
-            //   minusButton?.addEventListener("click", function() {
-            //     let currNum: number = Number(tmp.querySelector("input")!.value)
-            //     tmp.querySelector("input")!.value = String(currNum - 1);
-            //   });
-            //   plusButton.addEventListener("click", function() {
-            //     let currNum: number = Number(tmp.querySelector("input")!.value)
-            //     tmp.querySelector("input")!.value = String(currNum + 1);
-            //   });
-            // }
             this.nextGameButton.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
                 this.createNewGame();
                 this.nextGameView();
             }));
+            (0, inputController_1.betInputController)();
+            (0, inputController_1.betAmountButtonController)();
         }
         actionView() {
             this.betContents.classList.add("hide");
@@ -167,12 +154,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             container.append(suit, rank);
             return container;
         }
-        betAction() {
-            console.log("bet action");
+        betAction(betAmount) {
             while (this.table.gamePhase === "betting") {
                 console.log("do bet");
-                this.table.haveTurn({ action: "bet", "bet": 0 });
+                this.table.haveTurn({ action: "bet", "bet": betAmount });
             }
+        }
+        get getBetAmount() {
+            let total = 0;
+            for (let i = 0; i < this.betContent.length; i++) {
+                total += Number(this.betContent[i].querySelector("input").value) * Number(this.betContent[i].querySelector("p").innerHTML);
+            }
+            return total;
         }
         roundAction() {
             while (this.table.gamePhase != "roundOver") {

@@ -29,8 +29,6 @@ export class View {
     this.table = new Table("blackjack", userData);
     this.firstView();
     this.firstController();
-    betInputController();
-    betAmountButtonController();
   }
 
   private firstView() {
@@ -43,7 +41,7 @@ export class View {
   private firstController(): void {
     // betButtonのクリックイベント
     this.betButton.addEventListener("click", async () => {
-      this.betAction();
+      this.betAction(this.getBetAmount);
       this.updatePlayerInfo(this.table.house, "bet", 0)
       this.updatePlayersInfo("bet");
       this.actionView();
@@ -61,24 +59,13 @@ export class View {
       });
     }
 
-    // for (let i = 0; i < this.betContent.length; i++) {
-    //   let tmp = this.betContent[i];
-    //   let minusButton = tmp.querySelector("#minus")!;
-    //   let plusButton = tmp.querySelector("#plus")!;
-    //   minusButton?.addEventListener("click", function() {
-    //     let currNum: number = Number(tmp.querySelector("input")!.value)
-    //     tmp.querySelector("input")!.value = String(currNum - 1);
-    //   });
-    //   plusButton.addEventListener("click", function() {
-    //     let currNum: number = Number(tmp.querySelector("input")!.value)
-    //     tmp.querySelector("input")!.value = String(currNum + 1);
-    //   });
-    // }
-
     this.nextGameButton.addEventListener("click", async () => {
       this.createNewGame();
       this.nextGameView();
-    })
+    });
+
+    betInputController();
+    betAmountButtonController();
   }
 
   private actionView(): void {
@@ -176,12 +163,20 @@ export class View {
     return container;
   }
 
-  private betAction(): void {
-    console.log("bet action");
+  private betAction(betAmount: number): void {
     while (this.table.gamePhase === "betting") {
       console.log("do bet");
-      this.table.haveTurn({ action: "bet", "bet": 0 });
+      this.table.haveTurn({ action: "bet", "bet": betAmount });
     }
+  }
+
+  private get getBetAmount(): number {
+    let total = 0;
+    for (let i = 0; i < this.betContent.length; i++) {
+      total += Number(this.betContent[i].querySelector("input")!.value) * Number(this.betContent[i].querySelector("p")!.innerHTML);
+    }
+
+    return total;
   }
 
   private roundAction(): void {
