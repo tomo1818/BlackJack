@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AAAA,UAAU,CAAC;EACT,WAAW,EAAE,kBAAkB;CAChC",
+    "sources": [
+        "../sass/object/initialForm/form.scss"
+    ],
+    "names": [],
+    "file": "form.css"
+}

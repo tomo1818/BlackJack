@@ -31,5 +31,9 @@
 
   .house {
     margin-bottom: 50px;
+
+    .playerStatus {
+      display: none;
+    }
   }
 }

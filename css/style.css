@@ -28,6 +28,10 @@ body .show {
   display: block !important;
 }
 
+.mainTitle {
+  font-family: 'Bangers', cursive;
+}
+
 .gameTable-bg {
   background-color: #1D4434;
 }
@@ -58,6 +62,10 @@ body .show {
 
 .gameTable .house {
   margin-bottom: 50px;
+}
+
+.gameTable .house .playerStatus {
+  display: none;
 }
 
 .betContents {

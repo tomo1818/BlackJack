@@ -13,13 +13,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "../consts/cardElement", "../model/Table"], factory);
+        define(["require", "exports", "../consts/cardElement", "../controller/inputController", "../model/Table"], factory);
     }
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.View = void 0;
     const cardElement_1 = require("../consts/cardElement");
+    const inputController_1 = require("../controller/inputController");
     const Table_1 = require("../model/Table");
     class View {
         constructor(userData) {
@@ -39,6 +40,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             this.table = new Table_1.Table("blackjack", userData);
             this.firstView();
             this.firstController();
+            (0, inputController_1.betInputController)();
+            (0, inputController_1.betButtonController)();
         }
         firstView() {
             this.firstForm.classList.add("hide");
@@ -46,12 +49,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             this.updatePlayersInfo("create");
             this.gameTable.classList.remove("hide");
         }
-        // private secondView(): void {
-        //   this.firstForm.classList.add("hide");
-        //   this.updatePlayerInfo(this.table.house, "next", 0);
-        //   this.updatePlayersInfo("next");
-        //   this.gameTable.classList.remove("hide");
-        // }
         firstController() {
             // betButtonのクリックイベント
             this.betButton.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
@@ -71,19 +68,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
                     this.resultView();
                 }));
             }
-            for (let i = 0; i < this.betContent.length; i++) {
-                let tmp = this.betContent[i];
-                let minusButton = tmp.querySelector("#minus");
-                let plusButton = tmp.querySelector("#plus");
-                minusButton === null || minusButton === void 0 ? void 0 : minusButton.addEventListener("click", function () {
-                    let currNum = Number(tmp.querySelector("input").value);
-                    tmp.querySelector("input").value = String(currNum - 1);
-                });
-                plusButton.addEventListener("click", function () {
-                    let currNum = Number(tmp.querySelector("input").value);
-                    tmp.querySelector("input").value = String(currNum + 1);
-                });
-            }
+            // for (let i = 0; i < this.betContent.length; i++) {
+            //   let tmp = this.betContent[i];
+            //   let minusButton = tmp.querySelector("#minus")!;
+            //   let plusButton = tmp.querySelector("#plus")!;
+            //   minusButton?.addEventListener("click", function() {
+            //     let currNum: number = Number(tmp.querySelector("input")!.value)
+            //     tmp.querySelector("input")!.value = String(currNum - 1);
+            //   });
+            //   plusButton.addEventListener("click", function() {
+            //     let currNum: number = Number(tmp.querySelector("input")!.value)
+            //     tmp.querySelector("input")!.value = String(currNum + 1);
+            //   });
+            // }
             this.nextGameButton.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
                 this.createNewGame();
                 this.nextGameView();

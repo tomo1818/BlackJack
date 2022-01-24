@@ -1,4 +1,5 @@
 import { suitImg } from "../consts/cardElement";
+import { betAmountButtonController, betInputController } from "../controller/inputController";
 import { Player } from "../model/Player";
 import { Table } from "../model/Table";
 
@@ -28,6 +29,8 @@ export class View {
     this.table = new Table("blackjack", userData);
     this.firstView();
     this.firstController();
+    betInputController();
+    betAmountButtonController();
   }
 
   private firstView() {
@@ -36,13 +39,6 @@ export class View {
     this.updatePlayersInfo("create");
     this.gameTable.classList.remove("hide");
   }
-
-  // private secondView(): void {
-  //   this.firstForm.classList.add("hide");
-  //   this.updatePlayerInfo(this.table.house, "next", 0);
-  //   this.updatePlayersInfo("next");
-  //   this.gameTable.classList.remove("hide");
-  // }
 
   private firstController(): void {
     // betButtonのクリックイベント
@@ -65,19 +61,19 @@ export class View {
       });
     }
 
-    for (let i = 0; i < this.betContent.length; i++) {
-      let tmp = this.betContent[i];
-      let minusButton = tmp.querySelector("#minus")!;
-      let plusButton = tmp.querySelector("#plus")!;
-      minusButton?.addEventListener("click", function() {
-        let currNum: number = Number(tmp.querySelector("input")!.value)
-        tmp.querySelector("input")!.value = String(currNum - 1);
-      });
-      plusButton.addEventListener("click", function() {
-        let currNum: number = Number(tmp.querySelector("input")!.value)
-        tmp.querySelector("input")!.value = String(currNum + 1);
-      });
-    }
+    // for (let i = 0; i < this.betContent.length; i++) {
+    //   let tmp = this.betContent[i];
+    //   let minusButton = tmp.querySelector("#minus")!;
+    //   let plusButton = tmp.querySelector("#plus")!;
+    //   minusButton?.addEventListener("click", function() {
+    //     let currNum: number = Number(tmp.querySelector("input")!.value)
+    //     tmp.querySelector("input")!.value = String(currNum - 1);
+    //   });
+    //   plusButton.addEventListener("click", function() {
+    //     let currNum: number = Number(tmp.querySelector("input")!.value)
+    //     tmp.querySelector("input")!.value = String(currNum + 1);
+    //   });
+    // }
 
     this.nextGameButton.addEventListener("click", async () => {
       this.createNewGame();
