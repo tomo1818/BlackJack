@@ -50,11 +50,44 @@ body .show {
   color: white;
 }
 
+@media screen and (max-width: 599px) {
+  .gameTable .playerContents .playerName {
+    font-size: 24px;
+  }
+}
+
+.gameTable .playerContents .playerStatus {
+  color: white;
+}
+
+.gameTable .playerContents .playerCards {
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+@media screen and (max-width: 599px) {
+  .gameTable .playerContents .playerCards {
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    padding: 0 10px;
+  }
+}
+
 .gameTable .playerContents .playerCards .playerCard {
   position: relative;
   width: 20%;
   margin-right: 15px;
   background-color: white;
+}
+
+@media screen and (max-width: 599px) {
+  .gameTable .playerContents .playerCards .playerCard {
+    width: 30%;
+  }
 }
 
 .gameTable .playerContents .playerCards .playerCard .suit img {
@@ -65,8 +98,20 @@ body .show {
   margin-right: 0;
 }
 
+@media screen and (max-width: 599px) {
+  .gameTable .playerContents .playerCards .playerCard .rank {
+    font-size: 12px;
+  }
+}
+
 .gameTable .house {
   margin-bottom: 50px;
+}
+
+@media screen and (max-width: 599px) {
+  .gameTable .house {
+    margin-bottom: 20px;
+  }
 }
 
 .gameTable .house .playerStatus {
@@ -78,6 +123,7 @@ body .show {
   display: inline-block;
   background-image: url("../assets/card_back.png");
   background-size: cover;
+  background-position: center;
   position: absolute;
   top: 0;
   left: 0;

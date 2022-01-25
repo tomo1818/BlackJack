@@ -61,11 +61,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             for (let i = 0; i < this.actionButtons.length; i++) {
                 this.actionButtons[i].addEventListener("click", (e) => __awaiter(this, void 0, void 0, function* () {
                     const playerAction = e.target.value;
-                    this.roundAction(playerAction);
+                    yield this.roundAction(playerAction);
                     this.updatePlayersInfo("action"); // player
                     if (this.mainPlayer.gameStatus === "bust" || (playerAction === "stand" || playerAction === "surrender")) {
+                        yield this.wait(1);
                         this.houseAction();
                         this.updatePlayerInfo(this.table.house, "action", 0); // house
+                        yield this.wait(1);
                         this.updatePlayersInfo("action"); // player
                         this.table.blackjackEvaluateAndGetRoundResults();
                         this.updateResult();
@@ -179,7 +181,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             playerStatus.classList.add("playerStatus", "w-100");
             let playerCards = document.createElement("div");
             playerCards.id = "playerCards";
-            playerCards.classList.add("playerCards", "w-100", "d-flex", "justify-content-center");
+            playerCards.classList.add("playerCards", "w-100", "d-flex");
             playerContents.append(playerName, playerStatus, playerCards);
             return playerContents;
         }
@@ -209,18 +211,32 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             return total;
         }
         roundAction(userAction) {
-            if (this.mainPlayer.gameStatus !== "bust" && (userAction === "hit" || userAction === "double")) {
-                for (let i = 0; i < this.table.players.length; i++) {
-                    this.table.haveTurn({ action: userAction, bet: 0 });
-                    this.updatePlayerInfo(this.table.getTurnPlayer, "action", this.table.turnCounter % 3 + 1);
+            return __awaiter(this, void 0, void 0, function* () {
+                if (this.mainPlayer.gameStatus !== "bust" && (userAction === "hit" || userAction === "double")) {
+                    for (let i = 0; i < this.table.players.length; i++) {
+                        yield this.oneRoundAction(userAction);
+                    }
                 }
-            }
-            else {
-                while (this.table.gamePhase != "roundOver") {
-                    this.table.haveTurn({ action: userAction, bet: 0 });
-                    this.updatePlayerInfo(this.table.getTurnPlayer, "action", this.table.turnCounter % 3 + 1);
+                else {
+                    while (this.table.gamePhase != "roundOver") {
+                        yield this.oneRoundAction(userAction);
+                    }
                 }
-            }
+            });
+        }
+        oneRoundAction(userAction) {
+            return __awaiter(this, void 0, void 0, function* () {
+                try {
+                    yield this.wait(1); // 1秒静止
+                    console.log("wait 1 second");
+                    this.table.haveTurn({ action: userAction, bet: 0 });
+                    // this.updatePlayerInfo(this.table.getTurnPlayer, "action", this.table.turnCounter % 3 + 1);
+                    this.updatePlayersInfo("action");
+                }
+                catch (err) {
+                    console.error(err);
+                }
+            });
         }
         isDoubleAction() {
             return (this.mainPlayer.bet * 2 <= this.mainPlayer.chips);
@@ -261,6 +277,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
                 element.value = element.max;
             }
         }
+        wait(sec) {
+            return new Promise((resolve) => {
+                setTimeout(resolve, sec * 1000);
+                //setTimeout(() => {reject(new Error("エラー！"))}, sec*1000);
+            });
+        }
+        ;
     }
     exports.View = View;
 });

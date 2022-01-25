@@ -54,11 +54,13 @@ export class View {
     for (let i = 0; i < this.actionButtons.length; i++) {
       this.actionButtons[i].addEventListener("click", async (e): Promise<void> => {
         const playerAction = (e.target! as HTMLButtonElement).value;
-        this.roundAction(playerAction);
+        await this.roundAction(playerAction);
         this.updatePlayersInfo("action"); // player
         if (this.mainPlayer.gameStatus === "bust" || (playerAction === "stand" || playerAction === "surrender")) {
+          await this.wait(1);
           this.houseAction();
           this.updatePlayerInfo(this.table.house, "action", 0); // house
+          await this.wait(1);
           this.updatePlayersInfo("action"); // player
           this.table.blackjackEvaluateAndGetRoundResults();
           this.updateResult();
@@ -182,7 +184,7 @@ export class View {
     playerStatus.classList.add("playerStatus", "w-100");
     let playerCards = document.createElement("div");
     playerCards.id = "playerCards";
-    playerCards.classList.add("playerCards", "w-100", "d-flex", "justify-content-center")
+    playerCards.classList.add("playerCards", "w-100", "d-flex");
 
     playerContents.append(playerName, playerStatus, playerCards);
 
@@ -219,17 +221,27 @@ export class View {
     return total;
   }
 
-  private roundAction(userAction: string): void {
+  private async roundAction(userAction: string): Promise<void> {
     if (this.mainPlayer.gameStatus !== "bust" && (userAction === "hit" || userAction === "double")) {
       for (let i = 0; i < this.table.players.length; i++) {
-        this.table.haveTurn({ action: userAction, bet: 0 });
-        this.updatePlayerInfo(this.table.getTurnPlayer, "action", this.table.turnCounter % 3 + 1);
+        await this.oneRoundAction(userAction);
       }
     } else {
       while (this.table.gamePhase != "roundOver") {
-        this.table.haveTurn({ action: userAction, bet: 0 });
-        this.updatePlayerInfo(this.table.getTurnPlayer, "action", this.table.turnCounter % 3 + 1);
+        await this.oneRoundAction(userAction);
       }
+    }
+  }
+
+  private async oneRoundAction(userAction: string): Promise<void> {
+    try {
+      await this.wait(1); // 1秒静止
+      console.log("wait 1 second");
+      this.table.haveTurn({ action: userAction, bet: 0 });
+      // this.updatePlayerInfo(this.table.getTurnPlayer, "action", this.table.turnCounter % 3 + 1);
+      this.updatePlayersInfo("action");
+    } catch (err) {
+      console.error(err);
     }
   }
 
@@ -277,4 +289,11 @@ export class View {
       element.value = element.max;
     }
   }
+
+  private wait(sec: number) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, sec * 1000);
+      //setTimeout(() => {reject(new Error("エラー！"))}, sec*1000);
+    });
+  };
 }

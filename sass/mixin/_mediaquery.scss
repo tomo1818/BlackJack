@@ -1,0 +1,35 @@
+// ==================================================================
+// media queryの設定
+// ==================================================================
+// 下記URLのmixinを使用
+// https://www.nxworld.net/tips/sass-media-queries-mixin.html
+
+$mq-breakpoints: (
+  'xsmall': 320px,
+  'small' : 600px,
+  'medium': 768px,
+  'large' : 1024px,
+  'xlarge': 1280px,
+);
+
+@mixin mq($breakpoint: medium, $rule: min, $subtraction: false) {
+  $breakpoint: map_get($mq-breakpoints, $breakpoint);
+  @if $rule == max and $subtraction {
+    $breakpoint: $breakpoint - 1;
+  }
+  @media screen and (#{$rule}-width: $breakpoint) {
+    @content;
+  }
+}
+
+// デバイス画面サイズ
+// -----------------------
+// iPhone SE         320px
+// iPhone 8          375px
+// iPhone 8 plus     414px
+// -----------------------
+// iPad mini         768px
+// iPad (9.7inc)     768px
+// iPad Pro(10.5inc) 834px
+// iPad Pro(12.9inc) 1024px
+// -----------------------
