@@ -13,14 +13,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "../consts/cardElement", "../controller/inputController", "../model/Table"], factory);
+        define(["require", "exports", "../consts/cardElement", "../model/Table"], factory);
     }
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.View = void 0;
     const cardElement_1 = require("../consts/cardElement");
-    const inputController_1 = require("../controller/inputController");
     const Table_1 = require("../model/Table");
     class View {
         constructor(userData) {
@@ -28,7 +27,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             this.gameTable = document.getElementById("gameTable");
             this.betContents = document.getElementById("betContents");
             this.betContent = document.getElementsByClassName("betContent");
+            this.betInputs = document.getElementsByClassName("betInput");
             this.betButton = document.getElementById("betButton");
+            this.betErrorText = document.getElementById("betErrorText");
             this.housePlayer = document.getElementById("house");
             this.normalPlayers = document.getElementById("players");
             this.actionContents = document.getElementById("actionContents");
@@ -37,6 +38,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             this.nextGameButtonContents = document.getElementById("nextGameButtonContents");
             this.nextGameButton = document.getElementById("nextGameButton");
             this.table = new Table_1.Table("blackjack", userData);
+            this.mainPlayer = this.table.players[0];
             this.firstView();
             this.firstController();
         }
@@ -55,13 +57,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
                 this.actionView();
                 this.resetBetInputView();
             }));
+            // actionButtonのクリックイベント
             for (let i = 0; i < this.actionButtons.length; i++) {
                 this.actionButtons[i].addEventListener("click", (e) => __awaiter(this, void 0, void 0, function* () {
-                    console.log("action");
                     const playerAction = e.target.value;
                     this.roundAction(playerAction);
                     this.updatePlayersInfo("action"); // player
-                    if (this.table.players[0].gameStatus === "bust" || (playerAction === "stand" || playerAction === "surrender")) {
+                    if (this.mainPlayer.gameStatus === "bust" || (playerAction === "stand" || playerAction === "surrender")) {
                         this.houseAction();
                         this.updatePlayerInfo(this.table.house, "action", 0); // house
                         this.updatePlayersInfo("action"); // player
@@ -71,12 +73,37 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
                     }
                 }));
             }
+            // nextGameButtonのクリックイベント
             this.nextGameButton.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
                 this.createNewGame();
                 this.nextGameView();
             }));
-            (0, inputController_1.betInputController)();
-            (0, inputController_1.betAmountButtonController)();
+            // betInputController(); input要素を操作時のfocusoutイベント
+            for (let i = 0; i < this.betInputs.length; i++) {
+                this.betInputs[i].addEventListener('focusout', () => __awaiter(this, void 0, void 0, function* () {
+                    this.minMaxController(this.betInputs[i]);
+                    this.isBetErrorText(this.isBet(this.mainPlayer));
+                }));
+            }
+            // betAmountButtonController(); plus,minusボタンでの操作時のクリックイベント
+            for (let i = 0; i < this.betContent.length; i++) {
+                let tmp = this.betContent[i];
+                let tmpInput = tmp.querySelector("input");
+                let minusButton = tmp.querySelector("#minus");
+                let plusButton = tmp.querySelector("#plus");
+                minusButton === null || minusButton === void 0 ? void 0 : minusButton.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
+                    let currNum = Number(tmpInput.value);
+                    tmpInput.value = String(currNum - 1);
+                    this.minMaxController(tmpInput);
+                    this.isBetErrorText(this.isBet(this.mainPlayer));
+                }));
+                plusButton.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
+                    let currNum = Number(tmpInput.value);
+                    tmpInput.value = String(currNum + 1);
+                    this.minMaxController(tmpInput);
+                    this.isBetErrorText(this.isBet(this.mainPlayer));
+                }));
+            }
         }
         actionView() {
             this.betContents.classList.add("hide");
@@ -182,7 +209,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             return total;
         }
         roundAction(userAction) {
-            if (this.table.players[0].gameStatus !== "bust" && (userAction === "hit" || userAction === "double")) {
+            if (this.mainPlayer.gameStatus !== "bust" && (userAction === "hit" || userAction === "double")) {
                 for (let i = 0; i < this.table.players.length; i++) {
                     this.table.haveTurn({ action: userAction, bet: 0 });
                     this.updatePlayerInfo(this.table.getTurnPlayer, "action", this.table.turnCounter % 3 + 1);
@@ -196,12 +223,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             }
         }
         isDoubleAction() {
-            return (this.table.players[0].bet * 2 <= this.table.players[0].chips);
+            return (this.mainPlayer.bet * 2 <= this.mainPlayer.chips);
         }
         createResultLog(log) {
-            let logTag = document.createElement("p");
-            logTag.innerHTML = log;
-            return logTag;
+            let logElement = document.createElement("p");
+            logElement.innerHTML = log;
+            return logElement;
         }
         createNewGame() {
             this.table.newGame();
@@ -212,6 +239,27 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         }
         openCard() {
             this.housePlayer.getElementsByClassName("playerCard")[1].classList.add("cardOpen");
+        }
+        isBetErrorText(isBet) {
+            if (isBet) {
+                this.betErrorText.classList.add("hide");
+                this.betButton.disabled = false;
+            }
+            else {
+                this.betErrorText.classList.remove("hide");
+                this.betButton.disabled = true;
+            }
+        }
+        isBet(player) {
+            return player.chips >= this.getBetAmount;
+        }
+        minMaxController(element) {
+            if (element.min !== "" && Number(element.value) < Number(element.min)) {
+                element.value = element.min;
+            }
+            else if (element.max !== "" && Number(element.value) > Number(element.max)) {
+                element.value = element.max;
+            }
         }
     }
     exports.View = View;

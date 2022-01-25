@@ -1,17 +1,19 @@
 import { suitImg } from "../consts/cardElement";
-import { betAmountButtonController, betInputController } from "../controller/inputController";
 import { Player } from "../model/Player";
 import { Table } from "../model/Table";
 
 export class View {
   private table: Table
+  private mainPlayer: Player;
 
   private firstForm = document.getElementById("initialFromContents") as HTMLElement;
   private gameTable = document.getElementById("gameTable") as HTMLElement;
 
   private betContents = document.getElementById("betContents") as HTMLElement;
   private betContent = document.getElementsByClassName("betContent");
-  private betButton = document.getElementById("betButton") as HTMLElement;
+  private betInputs = document.getElementsByClassName("betInput");
+  private betButton = document.getElementById("betButton") as HTMLButtonElement;
+  private betErrorText = document.getElementById("betErrorText") as HTMLElement;
 
   private housePlayer = document.getElementById("house") as HTMLElement;
   private normalPlayers = document.getElementById("players") as HTMLElement;
@@ -26,6 +28,7 @@ export class View {
 
   constructor(userData: string) {
     this.table = new Table("blackjack", userData);
+    this.mainPlayer = this.table.players[0];
     this.firstView();
     this.firstController();
   }
@@ -47,13 +50,13 @@ export class View {
       this.resetBetInputView();
     });
 
+    // actionButtonのクリックイベント
     for (let i = 0; i < this.actionButtons.length; i++) {
-      this.actionButtons[i].addEventListener("click", async (e) => {
-        console.log("action");
+      this.actionButtons[i].addEventListener("click", async (e): Promise<void> => {
         const playerAction = (e.target! as HTMLButtonElement).value;
         this.roundAction(playerAction);
         this.updatePlayersInfo("action"); // player
-        if (this.table.players[0].gameStatus === "bust" || (playerAction === "stand" || playerAction === "surrender")) {
+        if (this.mainPlayer.gameStatus === "bust" || (playerAction === "stand" || playerAction === "surrender")) {
           this.houseAction();
           this.updatePlayerInfo(this.table.house, "action", 0); // house
           this.updatePlayersInfo("action"); // player
@@ -64,13 +67,39 @@ export class View {
       });
     }
 
-    this.nextGameButton.addEventListener("click", async () => {
+    // nextGameButtonのクリックイベント
+    this.nextGameButton.addEventListener("click", async (): Promise<void> => {
       this.createNewGame();
       this.nextGameView();
     });
 
-    betInputController();
-    betAmountButtonController();
+    // betInputController(); input要素を操作時のfocusoutイベント
+    for (let i = 0; i < this.betInputs.length; i++) {
+      this.betInputs[i].addEventListener('focusout', async (): Promise<void> => {
+        this.minMaxController(this.betInputs[i] as HTMLInputElement);
+        this.isBetErrorText(this.isBet(this.mainPlayer));
+      });
+    }
+
+    // betAmountButtonController(); plus,minusボタンでの操作時のクリックイベント
+    for (let i = 0; i < this.betContent.length; i++) {
+      let tmp = this.betContent[i];
+      let tmpInput = tmp.querySelector("input")! as HTMLInputElement;
+      let minusButton = tmp.querySelector("#minus")!;
+      let plusButton = tmp.querySelector("#plus")!;
+      minusButton?.addEventListener("click", async (): Promise<void> => {
+        let currNum: number = Number(tmpInput.value)
+        tmpInput.value = String(currNum - 1);
+        this.minMaxController(tmpInput);
+        this.isBetErrorText(this.isBet(this.mainPlayer));
+      });
+      plusButton.addEventListener("click", async (): Promise<void> => {
+        let currNum: number = Number(tmpInput.value)
+        tmpInput.value = String(currNum + 1);
+        this.minMaxController(tmpInput);
+        this.isBetErrorText(this.isBet(this.mainPlayer));
+      });
+    }
   }
 
   private actionView(): void {
@@ -191,7 +220,7 @@ export class View {
   }
 
   private roundAction(userAction: string): void {
-    if (this.table.players[0].gameStatus !== "bust" && (userAction === "hit" || userAction === "double")) {
+    if (this.mainPlayer.gameStatus !== "bust" && (userAction === "hit" || userAction === "double")) {
       for (let i = 0; i < this.table.players.length; i++) {
         this.table.haveTurn({ action: userAction, bet: 0 });
         this.updatePlayerInfo(this.table.getTurnPlayer, "action", this.table.turnCounter % 3 + 1);
@@ -205,13 +234,13 @@ export class View {
   }
 
   private isDoubleAction(): boolean {
-    return (this.table.players[0].bet * 2 <= this.table.players[0].chips)
+    return (this.mainPlayer.bet * 2 <= this.mainPlayer.chips)
   }
 
   private createResultLog(log: string): HTMLElement {
-    let logTag = document.createElement("p");
-    logTag.innerHTML = log;
-    return logTag;
+    let logElement = document.createElement("p");
+    logElement.innerHTML = log;
+    return logElement;
   }
 
   private createNewGame(): void {
@@ -225,5 +254,27 @@ export class View {
 
   private openCard(): void {
     this.housePlayer.getElementsByClassName("playerCard")[1].classList.add("cardOpen")
+  }
+
+  private isBetErrorText(isBet: boolean): void {
+    if (isBet) {
+      this.betErrorText.classList.add("hide");
+      this.betButton.disabled = false;
+    } else {
+      this.betErrorText.classList.remove("hide");
+      this.betButton.disabled = true;
+    }
+  }
+
+  private isBet(player: Player): boolean {
+    return player.chips >= this.getBetAmount;
+  }
+
+  private minMaxController(element: HTMLInputElement): void {
+    if (element.min !== "" && Number(element.value) < Number(element.min)) {
+      element.value = element.min;
+    } else if (element.max !== "" && Number(element.value) > Number(element.max)) {
+      element.value = element.max;
+    }
   }
 }
