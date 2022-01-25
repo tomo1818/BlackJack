@@ -4,6 +4,10 @@
 
 オンラインの学習プラットフォームであるRecursion内でのプロジェクト作品。
 
+## デモ
+
+![デモイメージ](https://raw.githubusercontent.com/wiki/tomo1818/BlackJack/hoge.gif)
+
 ## URL
 
 <https://tomo1818.github.io/BlackJack/>
