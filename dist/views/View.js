@@ -43,10 +43,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             this.firstController();
         }
         firstView() {
-            this.firstForm.classList.add("hide");
-            this.updatePlayerInfo(this.table.house, "create", 0);
-            this.updatePlayersInfo("create");
-            this.gameTable.classList.remove("hide");
+            return __awaiter(this, void 0, void 0, function* () {
+                this.firstForm.classList.add("hide");
+                this.gameTable.classList.remove("hide");
+                yield this.updatePlayerInfo(this.table.house, "create", 0);
+                yield this.updatePlayersInfo("create");
+            });
         }
         firstController() {
             // betButtonのクリックイベント
@@ -136,31 +138,34 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             return __awaiter(this, void 0, void 0, function* () {
                 let players = this.table.players;
                 for (let i = 0; i < players.length; i++) {
-                    this.updatePlayerInfo(players[i], type, i + 1);
+                    yield this.updatePlayerInfo(players[i], type, i + 1);
                 }
             });
         }
         updatePlayerInfo(player, type, index) {
-            let tmpComponent = (type === "create") ? this.createPlayerComponent() : document.getElementsByClassName("playerContents")[index];
-            tmpComponent.getElementsByClassName("playerName")[0].innerHTML = player.name;
-            tmpComponent.getElementsByClassName("playerStatus")[0].innerHTML = "S: " + player.gameStatus + " B: " + player.bet + " C: " + player.chips;
-            let cardsComponent = tmpComponent.getElementsByClassName("playerCards")[0];
-            player.hand.forEach((card, index) => {
-                let cardComponent = (type === "create" || cardsComponent.getElementsByClassName("playerCard")[index] === undefined) ? this.createCardComponent() : cardsComponent.getElementsByClassName("playerCard")[index];
-                cardComponent.getElementsByClassName("suit")[0].getElementsByTagName("img")[0].setAttribute("src", cardElement_1.suitImg[card.suit]);
-                cardComponent.getElementsByClassName("rank")[0].innerHTML = card.rank;
-                if (type == "create" || cardsComponent.getElementsByClassName("playerCard")[index] === undefined) {
-                    cardsComponent.append(cardComponent);
+            return __awaiter(this, void 0, void 0, function* () {
+                let tmpComponent = (type === "create") ? this.createPlayerComponent() : document.getElementsByClassName("playerContents")[index];
+                tmpComponent.getElementsByClassName("playerName")[0].innerHTML = player.name;
+                tmpComponent.getElementsByClassName("playerStatus")[0].innerHTML = "S: " + player.gameStatus + " B: " + player.bet + " C: " + player.chips;
+                let cardsComponent = tmpComponent.getElementsByClassName("playerCards")[0];
+                player.hand.forEach((card, index) => {
+                    let cardComponent = (type === "create" || cardsComponent.getElementsByClassName("playerCard")[index] === undefined) ? this.createCardComponent() : cardsComponent.getElementsByClassName("playerCard")[index];
+                    cardComponent.getElementsByClassName("suit")[0].getElementsByTagName("img")[0].setAttribute("src", cardElement_1.suitImg[card.suit]);
+                    cardComponent.getElementsByClassName("rank")[0].innerHTML = card.rank;
+                    if (type == "create" || cardsComponent.getElementsByClassName("playerCard")[index] === undefined) {
+                        cardsComponent.append(cardComponent);
+                    }
+                });
+                if (type === "create") {
+                    if (player.name == "house") {
+                        this.housePlayer.append(tmpComponent);
+                    }
+                    else {
+                        this.normalPlayers.append(tmpComponent);
+                    }
+                    yield this.wait(1); // 初期状態の時のみwaitを入れる。
                 }
             });
-            if (type === "create") {
-                if (player.name == "house") {
-                    this.housePlayer.append(tmpComponent);
-                }
-                else {
-                    this.normalPlayers.append(tmpComponent);
-                }
-            }
         }
         resetPlayersInfo() {
             this.housePlayer.innerHTML = "";

@@ -6,7 +6,7 @@
 
 ## URL
 
-https://tomo1818.github.io/BlackJack/
+<https://tomo1818.github.io/BlackJack/>
 
 ## 使用言語
 

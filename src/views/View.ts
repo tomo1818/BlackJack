@@ -33,11 +33,11 @@ export class View {
     this.firstController();
   }
 
-  private firstView() {
+  private async firstView() {
     this.firstForm.classList.add("hide");
-    this.updatePlayerInfo(this.table.house ,"create", 0);
-    this.updatePlayersInfo("create");
     this.gameTable.classList.remove("hide");
+    await this.updatePlayerInfo(this.table.house, "create", 0);
+    await this.updatePlayersInfo("create");
   }
 
   private firstController(): void {
@@ -135,11 +135,11 @@ export class View {
   private async updatePlayersInfo(type: string): Promise<void> {
     let players: Player[] = this.table.players;
     for (let i = 0; i < players.length; i++) {
-      this.updatePlayerInfo(players[i], type, i + 1);
+      await this.updatePlayerInfo(players[i], type, i + 1);
     }
   }
 
-  private updatePlayerInfo(player: Player,type: string, index: number): void {
+  private async updatePlayerInfo(player: Player,type: string, index: number): Promise<void> {
     let tmpComponent = (type === "create") ? this.createPlayerComponent() : document.getElementsByClassName("playerContents")[index];
     tmpComponent.getElementsByClassName("playerName")[0].innerHTML = player.name;
     tmpComponent.getElementsByClassName("playerStatus")[0].innerHTML = "S: " + player.gameStatus + " B: " + player.bet + " C: " + player.chips;
@@ -158,6 +158,7 @@ export class View {
       } else {
         this.normalPlayers.append(tmpComponent);
       }
+      await this.wait(1); // 初期状態の時のみwaitを入れる。
     }
   }
 
