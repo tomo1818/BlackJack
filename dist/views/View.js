@@ -133,10 +133,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             }
         }
         updatePlayersInfo(type) {
-            let players = this.table.players;
-            for (let i = 0; i < players.length; i++) {
-                this.updatePlayerInfo(players[i], type, i + 1);
-            }
+            return __awaiter(this, void 0, void 0, function* () {
+                let players = this.table.players;
+                for (let i = 0; i < players.length; i++) {
+                    this.updatePlayerInfo(players[i], type, i + 1);
+                }
+            });
         }
         updatePlayerInfo(player, type, index) {
             let tmpComponent = (type === "create") ? this.createPlayerComponent() : document.getElementsByClassName("playerContents")[index];

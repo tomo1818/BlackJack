@@ -132,7 +132,7 @@ export class View {
     }
   }
 
-  private updatePlayersInfo(type: string): void {
+  private async updatePlayersInfo(type: string): Promise<void> {
     let players: Player[] = this.table.players;
     for (let i = 0; i < players.length; i++) {
       this.updatePlayerInfo(players[i], type, i + 1);
