@@ -6,7 +6,7 @@
 
 ## デモ
 
-![デモイメージ](https://raw.github.com/wiki/wiki/tomo1818/BlackJack/images/game-sample.gif)
+![game-demo](https://user-images.githubusercontent.com/83647745/151016233-0e286b3b-f05b-464e-9c6b-52aefb68541d.gif)
 
 ## URL
 
