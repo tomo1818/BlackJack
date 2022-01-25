@@ -247,7 +247,7 @@ export class View {
   }
 
   private isDoubleAction(): boolean {
-    return (this.mainPlayer.bet * 2 <= this.mainPlayer.chips)
+    return (this.mainPlayer.bet * 2 <= this.mainPlayer.chips && this.mainPlayer.hand.length <= 2);
   }
 
   private createResultLog(log: string): HTMLElement {
