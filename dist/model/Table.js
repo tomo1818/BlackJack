@@ -47,32 +47,40 @@
             for (let i = 0; i < this.players.length; i++) {
                 const curr = this.players[i];
                 const currScore = this.players[i].getHandScore();
-                let result = "";
+                let resultMessage = "";
+                let gameResult = "";
                 if (curr.gameStatus === "bust") {
-                    result = "name: " + curr.name + ", action: " + curr.gameStatus + ", bet: " + String(curr.bet) + ", win: " + "-" + String(curr.bet);
+                    resultMessage = "name: " + curr.name + ", action: " + curr.gameStatus + ", bet: " + String(curr.bet) + ", win: " + "-" + String(curr.bet); // 負け
                     curr.chips -= curr.bet;
+                    gameResult = "lose";
                 }
                 else if (isBlackJack) {
                     if (this.isBlackJack(curr)) {
-                        result = "name: " + curr.name + ", action: " + curr.gameStatus + ", bet: " + String(curr.bet) + ", win: " + "0";
+                        resultMessage = "name: " + curr.name + ", action: " + curr.gameStatus + ", bet: " + String(curr.bet) + ", win: " + "0"; // 引き分け
+                        gameResult = "draw";
                     }
                     else {
-                        result = "name: " + curr.name + ", action: " + curr.gameStatus + ", bet: " + String(curr.bet) + ", win: " + "-" + String(curr.bet);
+                        resultMessage = "name: " + curr.name + ", action: " + curr.gameStatus + ", bet: " + String(curr.bet) + ", win: " + "-" + String(curr.bet); // 負け
                         curr.chips -= curr.bet;
+                        gameResult = "lose";
                     }
                 }
                 else if (house.gameStatus === "bust" || houseScore < currScore) {
-                    result = "name: " + curr.name + ", action: " + curr.gameStatus + ", bet: " + String(curr.bet) + ", win: " + String(curr.bet * (this.isBlackJack(curr) ? 1.5 : 1));
+                    resultMessage = "name: " + curr.name + ", action: " + curr.gameStatus + ", bet: " + String(curr.bet) + ", win: " + String(curr.bet * (this.isBlackJack(curr) ? 1.5 : 1));
                     curr.chips += curr.bet * (this.isBlackJack(curr) ? 1.5 : 1);
+                    gameResult = "win";
                 }
                 else if (curr.gameStatus === "surrender") {
-                    result = "name: " + curr.name + ", action: " + curr.gameStatus;
+                    resultMessage = "name: " + curr.name + ", action: " + curr.gameStatus;
+                    gameResult = "lose";
                 }
                 else {
-                    result = "name: " + curr.name + ", action: " + curr.gameStatus + ", bet: " + String(curr.bet) + ", win: " + "-" + String(curr.bet);
+                    resultMessage = "name: " + curr.name + ", action: " + curr.gameStatus + ", bet: " + String(curr.bet) + ", win: " + "-" + String(curr.bet);
                     this.players[i].chips -= curr.bet;
+                    gameResult = "lose";
                 }
-                this.resultLog.push(result);
+                this.resultLog.push(resultMessage);
+                this.players[i].updateMonteCarloArr(gameResult);
             }
         }
         blackjackAssignPlayerHands() {

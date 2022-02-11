@@ -84,6 +84,7 @@ export class Player {
     let bettingAmounts = 0;
     // モンテカルロ法
     bettingAmounts = this.monteCarloArr[0] + this.monteCarloArr.slice(-1)[0];
+    console.log(bettingAmounts);
 
     // ランダム
     // let currChips = this.chips;

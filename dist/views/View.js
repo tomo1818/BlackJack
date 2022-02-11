@@ -246,7 +246,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             });
         }
         isDoubleAction() {
-            return (this.mainPlayer.bet * 2 <= this.mainPlayer.chips);
+            return (this.mainPlayer.bet * 2 <= this.mainPlayer.chips && this.mainPlayer.hand.length <= 2);
         }
         createResultLog(log) {
             let logElement = document.createElement("p");
