@@ -12,6 +12,7 @@ export class Player {
   public bet: number;
   public winAmount: number;
   public gameStatus: string;
+  public monteCarloArr: number[];
 
   constructor(name: string, type: string, gameType: string) {
     this.name = name;
@@ -22,6 +23,7 @@ export class Player {
     this.bet = 0;
     this.winAmount = 0;
     this.gameStatus = "betting";
+    this.monteCarloArr = [5, 10, 15];
   }
 
   public promptPlayer(table: Table, userData: UserData): void {
@@ -59,38 +61,54 @@ export class Player {
 
   public getHandScore() {
     let score = 0;
+    // const isAce = this.isAce();
     for (let i = 0; i < this.hand.length; i++) {
       score += this.hand[i].getRankNumber;
     }
+    // if (isAce >= 1) {
+
+    // }
 
     return score;
   }
 
+  // public isAce(): number {
+  //   let count = 0;
+  //   for (let i = 0; i < this.hand.length; i++) {
+  //     if (this.hand[i].rank === "A") count += 1;
+  //   }
+  //   return count
+  // }
+
   public getAiBetDecision() {
     let bettingAmounts = 0;
-    let currChips = this.chips;
-    let hundreds = 0;
-    if (hundreds >= 100)
-      hundreds += 100 * Math.floor(Math.random() * Math.floor(currChips / 100));
-    bettingAmounts += hundreds;
-    currChips -= hundreds;
-    let fifties = 0;
-    if (currChips >= 100) fifties += 50 * Math.floor(Math.random() * (2 + 1));
-    else if (currChips >= 50)
-      fifties += 50 * Math.floor(Math.random() * (1 + 1));
-    bettingAmounts += fifties;
-    currChips -= fifties;
-    let twenties = 0;
-    if (currChips >= 40) twenties += 20 * Math.floor(Math.random() * (2 + 1));
-    else if (currChips >= 20)
-      twenties += 20 * Math.floor(Math.random() * (1 + 1));
-    bettingAmounts += twenties;
-    currChips -= twenties;
-    let fives = 0;
-    if (currChips >= 15) fives += 5 * Math.floor(Math.random() * (3 + 1));
-    else if (currChips >= 5) fives += 5 * Math.floor(Math.random() * (1 + 1));
-    bettingAmounts += fives;
-    currChips -= fives;
+    // モンテカルロ法
+    bettingAmounts = this.monteCarloArr[0] + this.monteCarloArr.slice(-1)[0];
+
+    // ランダム
+    // let currChips = this.chips;
+    // let hundreds = 0;
+    // if (hundreds >= 100)
+    //   hundreds += 100 * Math.floor(Math.random() * Math.floor(currChips / 100));
+    // bettingAmounts += hundreds;
+    // currChips -= hundreds;
+    // let fifties = 0;
+    // if (currChips >= 100) fifties += 50 * Math.floor(Math.random() * (2 + 1));
+    // else if (currChips >= 50)
+    //   fifties += 50 * Math.floor(Math.random() * (1 + 1));
+    // bettingAmounts += fifties;
+    // currChips -= fifties;
+    // let twenties = 0;
+    // if (currChips >= 40) twenties += 20 * Math.floor(Math.random() * (2 + 1));
+    // else if (currChips >= 20)
+    //   twenties += 20 * Math.floor(Math.random() * (1 + 1));
+    // bettingAmounts += twenties;
+    // currChips -= twenties;
+    // let fives = 0;
+    // if (currChips >= 15) fives += 5 * Math.floor(Math.random() * (3 + 1));
+    // else if (currChips >= 5) fives += 5 * Math.floor(Math.random() * (1 + 1));
+    // bettingAmounts += fives;
+    // currChips -= fives;
 
     return new GameDecision("acting", bettingAmounts);
   }
@@ -113,6 +131,19 @@ export class Player {
     } else if (gameDecision.action === "surrender") {
       this.chips -= this.bet;
       this.bet = 0;
+    }
+  }
+
+  public updateMonteCarloArr(gameResult: string): void {
+    const len = this.monteCarloArr.length;
+    if (gameResult === "win") {
+      this.monteCarloArr.shift();
+      this.monteCarloArr.pop();
+      if (len <= 3) {
+        this.monteCarloArr = [5, 10, 15];
+      }
+    } else if (gameResult === "lose") {
+      this.monteCarloArr.push(this.monteCarloArr[len - 1] + 5);
     }
   }
 }
