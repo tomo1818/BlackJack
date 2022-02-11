@@ -4,13 +4,14 @@
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "./GameDecision"], factory);
+        define(["require", "exports", "./GameDecision", "../consts/basicStrategy"], factory);
     }
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Player = void 0;
     const GameDecision_1 = require("./GameDecision");
+    const basicStrategy_1 = require("../consts/basicStrategy");
     class Player {
         constructor(name, type, gameType) {
             this.chips = 400;
@@ -51,7 +52,7 @@
         roundAction(table, userData) {
             let decision = { action: "", amount: 0 };
             if (this.type === "ai")
-                decision = this.getAiRoundDecision();
+                decision = this.getAiRoundDecision(table);
             else if (this.type === "user")
                 decision = new GameDecision_1.GameDecision(userData.action, userData.bet);
             else
@@ -80,7 +81,6 @@
             let bettingAmounts = 0;
             // モンテカルロ法
             bettingAmounts = this.monteCarloArr[0] + this.monteCarloArr.slice(-1)[0];
-            console.log(bettingAmounts);
             // ランダム
             // let currChips = this.chips;
             // let hundreds = 0;
@@ -107,13 +107,20 @@
             // currChips -= fives;
             return new GameDecision_1.GameDecision("acting", bettingAmounts);
         }
-        getAiRoundDecision() {
+        getAiRoundDecision(table) {
             const decision = new GameDecision_1.GameDecision("", 0);
-            const currHandScore = this.getHandScore();
-            if (currHandScore >= 15)
-                decision.action = "stand";
-            else
-                decision.action = "hit";
+            let currHandScore = this.getHandScore();
+            let openCard = table.house.hand[0].rank;
+            if (openCard === "J" || openCard === "Q" || openCard === "K") {
+                openCard = "10";
+            }
+            if (currHandScore <= 7) {
+                currHandScore = 8;
+            }
+            else if (currHandScore >= 18) {
+                currHandScore = 17;
+            }
+            decision.action = basicStrategy_1.basicStrategy[currHandScore][openCard];
             return new GameDecision_1.GameDecision(decision.action, 0);
         }
         doRoundAction(table, gameDecision) {

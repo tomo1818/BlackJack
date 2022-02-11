@@ -2,6 +2,7 @@ import { Card } from "./Card"
 import { Table } from "./Table";
 import { GameDecision } from "./GameDecision";
 import { UserData } from "../types/type";
+import { basicStrategy } from "../consts/basicStrategy";
 
 export class Player {
   public name: string;
@@ -52,7 +53,7 @@ export class Player {
 
   public roundAction(table: Table, userData: UserData): GameDecision {
     let decision: GameDecision = {action: "", amount: 0};
-    if (this.type === "ai") decision = this.getAiRoundDecision();
+    if (this.type === "ai") decision = this.getAiRoundDecision(table);
     else if (this.type === "user") decision = new GameDecision(userData.action, userData.bet);
     else decision = new GameDecision("bet", 0);
     this.doRoundAction(table, decision);
@@ -61,24 +62,11 @@ export class Player {
 
   public getHandScore() {
     let score = 0;
-    // const isAce = this.isAce();
     for (let i = 0; i < this.hand.length; i++) {
       score += this.hand[i].getRankNumber;
     }
-    // if (isAce >= 1) {
-
-    // }
-
     return score;
   }
-
-  // public isAce(): number {
-  //   let count = 0;
-  //   for (let i = 0; i < this.hand.length; i++) {
-  //     if (this.hand[i].rank === "A") count += 1;
-  //   }
-  //   return count
-  // }
 
   public getAiBetDecision() {
     let bettingAmounts = 0;
@@ -114,11 +102,19 @@ export class Player {
     return new GameDecision("acting", bettingAmounts);
   }
 
-  public getAiRoundDecision(): GameDecision {
+  public getAiRoundDecision(table: Table): GameDecision {
     const decision = new GameDecision("", 0);
-    const currHandScore = this.getHandScore();
-    if (currHandScore >= 15) decision.action = "stand";
-    else decision.action = "hit";
+    let currHandScore = this.getHandScore();
+    let openCard = table.house.hand[0].rank;
+    if (openCard === "J" || openCard === "Q" || openCard === "K") {
+      openCard = "10";
+    }
+    if (currHandScore <= 7) {
+      currHandScore = 8;
+    } else if (currHandScore >= 18) {
+      currHandScore = 17;
+    }
+    decision.action = basicStrategy[currHandScore][openCard]
     return new GameDecision(decision.action, 0);
   }
 

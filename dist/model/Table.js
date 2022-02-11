@@ -23,7 +23,6 @@
             this.turnCounter = 0;
             this.players = [];
             this.house = new Player_1.Player("house", "house", this.gameType);
-            console.log(userData);
             if (userData !== "") {
                 this.players.push(new Player_1.Player(userData, "user", this.gameType));
             }
